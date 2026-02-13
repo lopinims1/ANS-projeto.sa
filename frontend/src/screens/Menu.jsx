@@ -52,7 +52,7 @@ export default function Menu() {
 
                     <img id='authIcon' src="https://img.icons8.com/?size=100&id=9r19HDmevkSh&format=png&color=96DAE3"
                         className={`absolute duration-500 
-                            ${iconVisible ? 'w-8 h-8 opacity-100' : 'w-0 h-0 opacity-0'}`} />
+                            ${iconVisible ? 'w-8 h-8 opacity-100' : 'w-0 h-0 opacity-0'}`} />   
 
                     {/* Div de login e registro */}
                     <div id='authTexts' className={`flex items-center gap-1 w-full duration-600 ${containerOpen ? 'scale-100' : 'scale-0'}`}>
