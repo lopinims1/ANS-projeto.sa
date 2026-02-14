@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 export default function Menu() {
     const headerInfos = [
-        { title: "Home", link: "/", active: true },
+        { title: "Home", link: "/home", active: true },
         { title: "About", link: "/about", active: false },
         { title: "Plans", link: "/", active: false },
         { title: "Contact", link: "/", active: false },
@@ -32,8 +32,8 @@ export default function Menu() {
 
                     {/* Font bold em cada item com active true */}
                     {headerInfosActive.map(info => (
-                        <ul key={info.title} onClick={(e) => {
-                            e.preventDefault(); //Tirar esse prevent dps, para a li podder levar para sua respectiva página
+                        <ul key={info.title} onClick={() => {
+                             //Tirar esse prevent dps, para a li podder levar para sua respectiva página
                             setHeaderInfosActive(headerInfosActive.map(i =>
                                 i.title === info.title ? { ...i, active: true } : { ...i, active: false }
                             ));
@@ -81,10 +81,10 @@ export default function Menu() {
                             <p>Nosso objetivo é simplificar processos, reduzir riscos e tornar o dropshipping e a revenda online mais acessíveis, eficientes e estratégicos para qualquer pessoa que deseja empreender no e-commerce.</p>
                         </div>
                     </div>
-                    <img className='mt-15 w-[45%]' src="./public/imgProvisoria.png" alt="" />
+                    <img className='mt-15 w-[45%]' src="./imgProvisoria.png" alt="" />
                 </div>
             </main>
-            <img className='w-full' src="./public/bottomMain.svg" />
+            <img className='w-full' src="./bottomMain.svg" />
 
             <section className='w-full min-h-screen'>
 
