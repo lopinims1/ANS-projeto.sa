@@ -1,16 +1,39 @@
 import { useState, useEffect, useRef } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useAuth } from "../../hooks/useAuth"
 
 function Login() {
     const [currentImage, setCurrentImage] = useState(0);
+
+    const { login } = useAuth()
+    const navigate = useNavigate()
+
     const vantaRef = useRef(null);
     const vantaEffect = useRef(null);
+
+    const [form, setForm] = useState({ email: "", password: "" })
+    const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const images = [
         'https://images.unsplash.com/photo-1557683316-973673baf926?w=800&h=600&fit=crop',
         'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?w=800&h=600&fit=crop',
         'https://images.unsplash.com/photo-1557682268-e3955ed5d83f?w=800&h=600&fit=crop'
     ];
+
+    function handleChange(e) {
+        setError("")
+        setForm({ ...form, [e.target.name]: e.target.value })
+    }
+
+    async function handleSubmit(e) {
+        e.preventDefault()
+        setLoading(true)
+        const result = await login(form)
+        setLoading(false)
+        if (!result.success) { setError(result.error); return }
+        navigate("/home")
+    }
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -82,16 +105,23 @@ function Login() {
 
                 <div className="w-full h-full">
                     <h1 className="poppins mt-10 text-4xl font-light">Log in your account</h1>
-                    <form action="">
+
+                    {error && (
+                        <p className="mt-3 text-sm text-red-400 bg-red-400/10 border border-red-400/30 rounded px-3 py-2">
+                            {error}
+                        </p>
+                    )}
+
+                    <form onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-3 mt-12">
 
                             <div className="flex flex-col gap-1">
                                 <label htmlFor="userEmail" className="ml-2 poppins font-light text-md">E-mail</label>
-                                <input className="input-style" id="userEmail" type="email" placeholder="email@gmail.com" />
+                                <input className="input-style" id="userEmail" name="email" value={form.email} onChange={handleChange} type="email" placeholder="email@gmail.com" />
                             </div>
                             <div className="flex flex-col gap-1">
                                 <label htmlFor="userPassword" className="ml-2 poppins font-light text-md">Password</label>
-                                <input className="input-style" id="userPassword" type="password" placeholder="password123@!*" />
+                                <input className="input-style" id="userPassword" name="password" value={form.password} onChange={handleChange} type="password" placeholder="password123@!*" />
                             </div>
                         </div>
 
@@ -106,7 +136,7 @@ function Login() {
                             <span className="poppins text-sm font-light underline hover:no-underline text-[#96DAE3]"><a href="">Forgot my password</a></span>
                         </div>
 
-                        <button type="submit" id="loginBtn" className="bg-[#96DAE3] w-full text-[#31303A] py-2 px-4 mt-15 cursor-pointer hover:opacity-80 btn-style">login</button>
+                        <button type="submit" id="loginBtn" disabled={loading} className={`bg-[#96DAE3] w-full text-[#31303A] py-2 px-4 mt-15 cursor-pointer hover:opacity-80 btn-style disabled:opacity-50 disabled:cursor-not-allowed ${loading ? 'logging in...' : 'login'}`}>login</button>
                     </form>
                 </div>
             </div>

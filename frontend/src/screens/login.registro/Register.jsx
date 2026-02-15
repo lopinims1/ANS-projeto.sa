@@ -1,8 +1,22 @@
 import { useState, useEffect, useRef } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useAuth } from "../../hooks/useAuth"
 
 export default function Register() {
-  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "" });
+  const { register } = useAuth()
+  const navigate = useNavigate()
+
+  const [terms, setTerms] = useState(false)
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
+
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: ""
+  })
+
   const [currentImage, setCurrentImage] = useState(0);
   const vantaRef = useRef(null);
   const vantaEffect = useRef(null);
@@ -15,14 +29,18 @@ export default function Register() {
   ];
 
   function handleChange(e) {
+    setError("")
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function handleRegister() {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    users.push(form);
-    localStorage.setItem("users", JSON.stringify(users));
-    alert("Conta criada!");
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!terms) { setError("Aceite os termos para continuar."); return }
+    setLoading(true)
+    const result = await register(form)
+    setLoading(false)
+    if (!result.success) { setError(result.error); return }
+    navigate("/home")
   }
 
   useEffect(() => {
@@ -84,38 +102,55 @@ export default function Register() {
 
         <div className="w-full h-full">
           <h1 className="poppins mt-10 text-4xl font-light">Create an account</h1>
-          <form action="">
+
+          {error && (
+            <p className="mt-3 text-sm text-red-400 bg-red-400/10 border border-red-400/30 rounded px-3 py-2">
+              {error}
+            </p>
+          )}
+
+          <form onSubmit={handleSubmit}>
+
             <div className="flex flex-col gap-3 mt-12">
+
               <div className="flex gap-4">
                 <div className="flex flex-col w-full gap-2">
-                  <label className="font-light text-sm ml-2" htmlFor="userName">First name</label>
-                  <input className="names-style" id="userName" type="text" placeholder="Name" />
+                  <label className="font-light text-sm ml-2" htmlFor="firstName">First name</label>
+                  <input className="names-style" id="firstName" name="firstName" type="text" placeholder="Name"
+                    value={form.firstName} onChange={handleChange} required />
                 </div>
+
                 <div className="flex flex-col w-full gap-2">
-                  <label className="font-light text-sm ml-2" htmlFor="userLastName">Last name</label>
-                  <input className="names-style" id="userLastName" type="text" placeholder="Last name" />
+                  <label className="font-light text-sm ml-2" htmlFor="lastName">Last name</label>
+                  <input className="names-style" id="lastName" name="lastName" type="text" placeholder="Last name"
+                    value={form.lastName} onChange={handleChange} required />
                 </div>
               </div>
+
+
               <div className="flex flex-col gap-1">
-                <label htmlFor="userEmail" className="ml-2 poppins font-light text-md">E-mail</label>
-                <input className="input-style" id="userEmail" type="email" placeholder="email@gmail.com" />
+                <label htmlFor="email" className="ml-2 poppins font-light text-md">E-mail</label>
+                <input className="input-style" id="email" name="email" type="email" placeholder="email@gmail.com"
+                  value={form.email} onChange={handleChange} required />
               </div>
+
               <div className="flex flex-col gap-1">
-                <label htmlFor="userPassword" className="ml-2 poppins font-light text-md">Password</label>
-                <input className="input-style" id="userPassword" type="password" placeholder="password123@!*" />
+                <label htmlFor="password" className="ml-2 poppins font-light text-md">Password</label>
+                <input className="input-style" id="password" name="password" type="password" placeholder="password123@!*"
+                  value={form.password} onChange={handleChange} required />
               </div>
             </div>
 
             <div className="flex justify-between items-center mt-3">
               <div className="flex items-center gap-1 ml-1">
-                <input type="checkbox" name="terms" id="termsBox"
+                <input type="checkbox" id="termsBox" checked={terms} onChange={(e) => setTerms(e.target.checked)}
                   className="w-4 h-4 appearance-none rounded-xs bg-[#4A485B] checked:bg-[#96DAE3] cursor-pointer relative checked:after:content-['✓'] checked:after:absolute checked:after:text-[#31303A] checked:after:text-xs checked:after:left-1 checked:after:-top-0.2" />
                 <label htmlFor="terms" className="poppins text-xs font-light">I agree with the <a className="underline hover:no-underline text-[#96DAE3]" href="/terms">terms and conditions</a></label>
               </div>
               <span className="poppins text-xs font-light mr-1">Already have an account? <a className="underline hover:no-underline text-[#96DAE3]" href="/login">Login</a></span>
             </div>
 
-            <button type="submit" className="bg-[#96DAE3] w-full text-[#31303A] py-2 px-4 mt-10 cursor-pointer hover:opacity-80 btn-style">create account</button>
+            <button type="submit" disabled={loading} className="bg-[#96DAE3] w-full text-[#31303A] py-2 px-4 mt-10 cursor-pointer hover:opacity-80 btn-style disabled:opacity-50 disabled:cursor-not-allowed">{loading ? "creating..." : "create account"}</button>
           </form>
         </div>
       </div>
