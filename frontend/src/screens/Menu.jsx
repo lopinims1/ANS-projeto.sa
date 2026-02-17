@@ -33,7 +33,7 @@ export default function Menu() {
                     {/* Font bold em cada item com active true */}
                     {headerInfosActive.map(info => (
                         <ul key={info.title} onClick={() => {
-                             //Tirar esse prevent dps, para a li podder levar para sua respectiva página
+                             
                             setHeaderInfosActive(headerInfosActive.map(i =>
                                 i.title === info.title ? { ...i, active: true } : { ...i, active: false }
                             ));

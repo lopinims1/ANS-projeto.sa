@@ -3,6 +3,8 @@ import React from "react";
 export default function Home() {
     return (
         <div className="bg-[#31303A] min-h-screen w-screen overflow-hidden flex">
+            
+
 
             {/* Nav lateral */}
             <div className="bg-[#96DAE3] flex flex-col items-center justify-center gap-7 h-full py-6 w-16 sticky top-0 rounded-r-2xl shrink-0">
@@ -13,34 +15,39 @@ export default function Home() {
             </div>
 
             {/* Conteúdo principal */}
-            <div className="flex flex-col flex-1 min-w-0 p-4 gap-4">
+            <div className="flex flex-col flex-1 min-w-0 px-4 pb-4 gap-4">
 
                 {/* Setinha */}
                 <div className="flex justify-end">
                     <button className="bg-[#96DAE3] flex justify-center cursor-pointer rounded-b-xl p-1.5 w-10 outline-none">
-                        <img src="../../public/Setinha.svg" alt="Seta" className="w-4" />
+                        <img src="../../public/Setinha.svg" alt="arrow" className="w-4" />
                     </button>
                 </div>
 
                 {/* Barra de mercados */}
-                <div className="flex items-center gap-8 flex-wrap text-[#D7D7D7]">
+                <div className="flex items-center gap-8 ml-5 flex-wrap text-[#D7D7D7]">
                     <label className="text-[#96DAE3] flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className="w-5 h-5 cursor-pointer outline-none" />
+                        <input type="checkbox"
+                        className="w-6 h-6 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
+                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]"/>
                         <span>Aliexpress</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className="w-5 h-5 cursor-pointer outline-none" />
+                        <input type="checkbox" className="w-6 h-6 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
+                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
                         <span>Shopee</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className="w-5 h-5 cursor-pointer outline-none" />
+                        <input type="checkbox" className="w-6 h-6 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
+                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
                         <span>Mercado Livre</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className="w-5 h-5 cursor-pointer outline-none" />
+                        <input type="checkbox" className="w-6 h-6 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
+                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
                         <span>Amazon</span>
                     </label>
-                    <button className="flex justify-center items-center font-medium border-2 border-[#D7D7D7] rounded-sm w-8 h-8 cursor-pointer outline-none text-[#D7D7D7]">
+                    <button className="flex justify-center items-center font-medium border-2 border-[#D7D7D7] rounded-sm w-7 h-7 cursor-pointer outline-none text-[#D7D7D7]">
                         <span className="text-xl leading-none mb-1">+</span>
                     </button>
                 </div>
