@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 
 export default function Menu() {
     const headerInfos = [
-        { title: "Home", link: "/home", active: true },
+        { title: "Menu", link: "/menu", active: true},
+        { title: "Home", link: "/home", active: false },
         { title: "About", link: "/about", active: false },
         { title: "Plans", link: "/", active: false },
         { title: "Contact", link: "/", active: false },
