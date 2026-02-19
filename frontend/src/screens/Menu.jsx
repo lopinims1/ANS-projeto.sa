@@ -3,11 +3,10 @@ import { Link } from 'react-router-dom'
 
 export default function Menu() {
     const headerInfos = [
-        { title: "Menu", link: "/menu", active: true},
-        { title: "Home", link: "/home", active: false },
+        { title: "Home", link: "/home", active: true },
         { title: "About", link: "/about", active: false },
-        { title: "Plans", link: "/", active: false },
-        { title: "Contact", link: "/", active: false },
+        { title: "Plans", link: "/plans", active: false },
+        { title: "Contact", link: "/contact", active: false },
     ];
     const [headerInfosActive, setHeaderInfosActive] = useState(headerInfos);
     const [iconVisible, setIconVisible] = useState(true);

@@ -83,7 +83,7 @@ export default function Register() {
           className="text-[#FFFFFF] text-base font-light underline underline-offset-8 decoration-[#96DAE3] hover:opacity-80 transition-all duration-300">register</Link>
       </div>
 
-      <div className="w-full max-w-5xl h-150 m-5 bg-transparent rounded-sm border-2 border-[#96dae379] shadow-lg overflow-hidden flex gap-8 pr-7 px-4 py-3">
+      <div className="w-full max-w-5xl h-150 m-5 bg-[#3b3a48] rounded-sm border-2 border-[#6a6684ae] shadow-lg overflow-hidden flex gap-8 pr-7 px-4 py-3">
 
         <div className="relative h-full w-full max-w-md bg-[#31303A] rounded-sm">
           {images.map((img, index) => (
