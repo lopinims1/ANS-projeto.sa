@@ -1,34 +1,97 @@
 import React from "react";
+import { Link } from 'react-router-dom'
+import { useState } from 'react';
 
 export default function Home() {
+
+    const asideIcons = [
+        { image: "Lupa", link: "/search", active: false },
+        { image: "Home", link: "/home", active: true },
+        { image: "Foguinho", link: "/trending", active: false },
+        { image: "Settings", link: "/settings", active: false },
+    ];
+
+    const [asideIconsActive, setAsideIconsActive] = useState(asideIcons);
+    const [containerOpen, setContainerOpen] = useState(false);
+    const [iconVisible, setIconVisible] = useState(true);
+
+
+    function handleClick() {
+        setContainerOpen(prev => !prev);
+    }
+
     return (
         <div className="bg-[#31303A] min-h-screen w-screen overflow-hidden flex">
-            
-
 
             {/* Nav lateral */}
             <div className="bg-[#96DAE3] flex flex-col items-center justify-center gap-7 h-full py-6 w-16 sticky top-0 rounded-r-2xl shrink-0">
-                <img src="../../public/Lupa.svg" alt="Lupa" className="w-5 cursor-pointer" />
-                <img src="../../public/Home.svg" alt="Casinha" className="w-5 cursor-pointer" />
-                <img src="../../public/Foguinho.svg" alt="Em alta" className="w-5 cursor-pointer" />
-                <img src="../../public/Settings.svg" alt="Configurações" className="w-5 cursor-pointer" />
+                {asideIconsActive.map((item, index) => (
+                    <Link key={index} to={item.link} onClick={() => {
+                        setAsideIconsActive(prev => prev.map((el, i) => ({
+                            ...el,
+                            active: i === index
+                        })))
+                    }}>
+                        <img src={`../../public/${item.image}.svg`} alt={item.image} className={`w-7 hover:opacity-100 transition-all duration-300 ${item.active ? "opacity-100" : "opacity-50"}`} />
+                    </Link>
+                ))}
             </div>
 
             {/* Conteúdo principal */}
             <div className="flex flex-col flex-1 min-w-0 px-4 pb-4 gap-4">
 
                 {/* Setinha */}
+                {/* Dropdown do usuário */}
                 <div className="flex justify-end">
-                    <button className="bg-[#96DAE3] flex justify-center cursor-pointer rounded-b-xl p-1.5 w-10 outline-none">
-                        <img src="../../public/Setinha.svg" alt="arrow" className="w-4" />
-                    </button>
+                    <div className="relative">
+
+                        {/* Botão trigger — some quando abre */}
+                        <button onClick={handleClick}
+                        className={`bg-[#96DAE3] rounded-b-lg w-10 h-5 flex items-center justify-center cursor-pointer
+                        transition-all duration-300 ${containerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+                            
+                            <img src="https://img.icons8.com/?size=100&id=4GrGB5l93HFc&format=png&color=31303A" className="w-4 h-4" alt="Dropdown"/>
+
+                        </button>
+
+                        {/* Dropdown */}
+                        <div className={`absolute right-0 top-0 bg-[#96DAE3] rounded-bl-xl rounded-br-xl
+                        transition-all duration-400 ease-in-out overflow-hidden
+                        ${containerOpen ? 'max-h-60 opacity-100 shadow-lg' : 'max-h-0 opacity-0'}`}>
+
+                            {/* Header do dropdown com botão fechar */}
+                            <div className="flex justify-end px-3 pt-2 pb-2">
+                                <button onClick={handleClick} className="text-[#31303A] transition-transform duration-300 cursor-pointer">
+
+                                    <img src="https://img.icons8.com/?size=100&id=39787&format=png&color=000000" className="w-4 h-4" alt="Fechar"/>
+                                </button>
+                            </div>
+
+                            <ul className="flex flex-col px-5 gap-2 text-sm text-[#31303A] font-medium whitespace-nowrap">
+                                <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
+                                    Conta
+                                </li>
+                                <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
+                                     Configurações
+                                </li>
+                                <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
+                                    Produtos
+                                </li>
+
+                                <li className="flex items-center gap-2 text-[#CE2424] hover:translate-x-1 transition-transform duration-200 cursor-pointer pb-2">
+                                    Sair
+                                    <img src="https://img.icons8.com/?size=100&id=vZasO3UTBpQE&format=png&color=CE2424" className="w-4" alt="Sair"/>
+                                </li>   
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Barra de mercados */}
                 <div className="flex items-center gap-8 ml-5 flex-wrap text-[#D7D7D7]">
                     <label className="text-[#96DAE3] flex items-center gap-2 cursor-pointer">
                         <input type="checkbox"
-                        className="w-6 h-6 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
+                            className="w-6 h-6 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
                         checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]"/>
                         <span>Aliexpress</span>
                     </label>
