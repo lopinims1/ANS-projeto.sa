@@ -23,10 +23,8 @@ export default function Home() {
     return (
         <div className="bg-[#31303A] min-h-screen w-screen max-w-screen overflow-hidden flex">
 
-
-
             {/* Nav lateral */}
-            <div className="bg-[#96DAE3] flex flex-col items-center justify-center gap-7 h-full py-6 w-16 sticky top-0 rounded-r-2xl shrink-0">
+            <div className="bg-[#96DAE3] flex flex-col items-center justify-center gap-7 h-full mt-80 py-6 w-16 rounded-r-2xl ">
                 {asideIconsActive.map((item, index) => (
                     <Link key={index} to={item.link} onClick={() => {
                         setAsideIconsActive(prev => prev.map((el, i) => ({
@@ -40,7 +38,7 @@ export default function Home() {
             </div>
 
             {/* Conteúdo principal */}
-            <div className="flex flex-col flex-1 min-w-0 px-4 pb-4 gap-4">
+            <div className="flex flex-col flex-1 min-w-450 max-w-460 px-4 pb-4 gap-4">
 
                 {/* Setinha */}
                 {/* Dropdown do usuário */}
@@ -57,7 +55,7 @@ export default function Home() {
                         </button>
 
                         {/* Dropdown */}
-                        <div className={`absolute right-0 top-0 bg-[#96DAE3] rounded-bl-xl rounded-br-xl
+                        <div className={`absolute right-0 top-0 bg-[#96DAE3] rounded-b-xl
                         transition-all duration-400 ease-in-out overflow-hidden
                         ${containerOpen ? 'max-h-60 opacity-100 shadow-lg' : 'max-h-0 opacity-0'}`}>
 
@@ -70,33 +68,63 @@ export default function Home() {
                             </div>
 
                             <ul className="flex flex-col px-5 gap-2 text-sm text-[#31303A] font-medium whitespace-nowrap">
-                                <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
+                                <Link to='/conta' onclick={e => e.stopPropagation()} className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
                                     Conta
-                                </li>
-                                <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
+                                </Link>
+
+                                <Link to='/config' onclick={e => e.stopPropagation()} className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
                                      Configurações
-                                </li>
+                                </Link>
+
                                 <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
                                     Produtos
                                 </li>
 
-                                <li className="flex items-center gap-2 text-[#CE2424] hover:translate-x-1 transition-transform duration-200 cursor-pointer pb-2">
+                                <Link to='/conta' onclick={e => e.stopPropagation()} className="flex items-center gap-2 text-[#CE2424] hover:translate-x-1 transition-transform duration-200 cursor-pointer pb-2">
                                     Sair
                                     <img src="https://img.icons8.com/?size=100&id=vZasO3UTBpQE&format=png&color=CE2424" className="w-4" alt="Sair"/>
-                                </li>   
+                                </Link>   
                             </ul>
                         </div>
                     </div>
                 </div>
 
+                  {/* Barra de mercados */}
+                <div className="flex items-center gap-8 ml-5 flex-wrap text-[#D7D7D7]">
+                    <label className="text-[#96DAE3] flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox"
+                        className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
+                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]"/>
+                        <span>Aliexpress</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
+                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
+                        <span>Shopee</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
+                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
+                        <span>Mercado Livre</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
+                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
+                        <span>Amazon</span>
+                    </label>
+                    <button className="flex justify-center items-center font-medium border-2 border-[#D7D7D7] rounded-sm w-7 h-7 cursor-pointer outline-none text-[#D7D7D7]">
+                        <span className="text-xl leading-none mb-1">+</span>
+                    </button>
+                </div>
+
                 {/* Container cinza principal */}
-                <div className="flex flex-col bg-[#49475B] rounded-xl p-3.5 gap-15 flex-1">
+                <div className="flex flex-col bg-[#49475B] max-h-220 min-w-450 max-w-460 rounded-xl p-3.5 gap-15 flex-1">
 
                     {/* Section top — 3 cards */}
-                    <div className="flex gap-5 max-w-370 h-70">
+                    <div className="flex gap-5 w-445 h-85">
 
                         {/* Bruto */}
-                        <div className="bg-[#31303A] text-[#E5E3FF] flex flex-col font-medium gap-10 rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 pl-2 w-60">
+                        <div className="bg-[#31303A] text-[#E5E3FF] flex gap-10 flex-col font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 pl-2 w-80">
                             <div className="flex text-[#31303A] gap-0.5">
                                 <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-l-sm">1 Dia</span>
 
@@ -139,7 +167,7 @@ export default function Home() {
                         </div>
 
                         {/* Líquido */}
-                        <div className="bg-[#31303A] text-[#E5E3FF] flex flex-col font-medium gap-10 rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 pl-2 w-60">
+                        <div className="bg-[#31303A] text-[#E5E3FF] flex flex-col gap-10 font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 pl-2 w-80">
                             <div className="flex text-[#31303A] gap-0.5">
                                 <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-l-sm">1 Dia</span>
 
@@ -175,15 +203,17 @@ export default function Home() {
                         </div>
 
                         {/* Gráfico */}
-                        <div className="bg-[#31303A] text-[#31303A] flex flex-col font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-2 pl-5 gap-3 flex-3">
-                            <div className="flex gap-0.5">
-                                <span className="bg-[#5E5991] cursor-pointer rounded-l-lg text-[#E5E3FF]">Visualizações</span>
+                        <div className="bg-[#31303A] text-[#31303A] flex flex-col font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-2 w-275">
+                            <div className="flex gap-163">
+                                <div className="flex gap-0.5 pl-5">
+                                    <span className="bg-[#5E5991] cursor-pointer rounded-l-lg text-[#E5E3FF]">Visualizações</span>
 
-                                <span className="bg-[#E5E3FF] cursor-pointer">Cliques</span>
+                                    <span className="bg-[#E5E3FF] cursor-pointer">Cliques</span>
 
-                                <span className="bg-[#E5E3FF] cursor-pointer">Compras</span>
+                                    <span className="bg-[#E5E3FF] cursor-pointer">Compras</span>
+                                </div>
 
-                                <div className="flex gap-0.5 ml-auto pr-5">
+                                <div className="flex gap-0.5">
                                     <span className="bg-[#E5E3FF] cursor-pointer">1Dia</span>
 
                                     <span className="bg-[#E5E3FF] cursor-pointer">5Dias</span>
@@ -197,33 +227,33 @@ export default function Home() {
                     </div>
 
                     {/* Section bottom */}
-                    <div className="flex justify-between w-full gap-5">
+                    <div className="flex justify-between w-445 h-95 mt-5">
 
                         {/* Esquerda: GoogleAds + Plano */}
                         <div className="flex gap-5">
 
                             {/* GoogleAds */}
-                            <div className="bg-[url('../../public/GoogleAds.svg')] bg-no-repeat bg-cover flex flex-col-reverse h-77 w-74 rounded-xl shrink-0">
+                            <div className="bg-[url('../../public/GoogleAds.svg')] bg-no-repeat bg-cover flex flex-col-reverse w-100 rounded-xl shrink-0">
                                 <button className="bg-[#2C2399] text-[#E5E3FF] p-4 font-medium cursor-pointer outline-none rounded-b-xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] w-full">
                                     Conectar GoogleAds
                                 </button>
                             </div>
 
                             {/* Plano */}
-                            <div className="bg-[#31303A] text-[#FFFFFF] flex flex-col font-medium h-77 w-50 text-center rounded-xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] shrink-0 overflow-hidden">
+                            <div className="bg-[#31303A] text-[#FFFFFF] flex gap-28 flex-col font-medium w-70 rounded-xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] shrink-0 overflow-hidden">
                                 <div className="flex flex-col gap-2">
-                                    <div className="bg-[#E5E3FF] text-[#31303A] justify-center p-2 font-semibold">
+                                    <div className="bg-[#E5E3FF] text-[#31303A] justify-center text-center p-2 font-semibold">
                                         <span>Plano mensal: 80$</span>
                                     </div>
-
-                                    <div className="flex flex-col gap-3">
+                                    
+                                    <div className="flex flex-col pl-2 gap-3">
                                         <div className="flex gap-4 items-center">
-                                            <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
-
+                                            <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10 text-[#31303A]">
+                                                3/4
                                             </div>
-                                            <div>
-                                                <p></p>
-                                                <span>Seleção de <span>temas</span> que pode conter na aba de filtros.</span>
+                                            <div className="flex flex-col">
+                                                <p>Temas</p>
+                                                <span className="text-[12px]">Seleção de <span className="text-[#D3CFFF]">temas</span> que pode conter na aba de filtros.</span>
                                             </div>
                                         </div>
 
@@ -240,9 +270,9 @@ export default function Home() {
                                             </div>
                                             <span>Relatórios</span>
                                         </div>
-
                                     </div>
                                 </div>
+
                                 <button className="bg-[#5E5991] p-4 font-medium cursor-pointer outline-none w-full">
                                     Botão melhorar plano
                                 </button>

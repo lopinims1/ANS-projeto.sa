@@ -2,114 +2,281 @@ import { BiLike, BiDislike } from "react-icons/bi";
 import { FaStar } from "react-icons/fa";
 import { FiMoreHorizontal } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
+import { Link } from 'react-router-dom'
+import { useState, useRef, useCallback, useEffect } from 'react';
+
 
 export default function Search() {
+
+  const asideIcons = [
+    { image: "Lupa", link: "/search", active: false },
+    { image: "Home", link: "/home", active: true },
+    { image: "Foguinho", link: "/trending", active: false },
+    { image: "Settings", link: "/settings", active: false },
+  ];
+
+  const [asideIconsActive, setAsideIconsActive] = useState(asideIcons);
+  const [containerOpen, setContainerOpen] = useState(false);
+
+  // Scrollbar state 
+  const scrollRef = useRef(null);
+  const trackRef = useRef(null);
+  const thumbRef = useRef(null);
+  const isDragging = useRef(false);
+  const dragStartY = useRef(0);
+  const dragStartScrollTop = useRef(0);
+  const scrollTimeout = useRef(null);
+
+  const [thumbStyle, setThumbStyle] = useState({ top: 0, height: 40 });
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const updateThumb = useCallback(() => {
+    const el = scrollRef.current;
+    const track = trackRef.current;
+    if (!el || !track) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    const trackHeight = track.clientHeight;
+    const thumbHeight = Math.max((clientHeight / scrollHeight) * trackHeight, 40);
+    const maxScroll = scrollHeight - clientHeight;
+    const ratio = maxScroll > 0 ? scrollTop / maxScroll : 0;
+    const thumbTop = ratio * (trackHeight - thumbHeight);
+    const prog = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
+
+    setThumbStyle({ top: thumbTop, height: thumbHeight });
+    setProgress(prog);
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    updateThumb();
+    setIsScrolling(true);
+    clearTimeout(scrollTimeout.current);
+    scrollTimeout.current = setTimeout(() => setIsScrolling(false), 1000);
+  }, [updateThumb]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    updateThumb();
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    const ro = new ResizeObserver(updateThumb);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", handleScroll);
+      ro.disconnect();
+    };
+  }, [handleScroll, updateThumb]);
+
+  const onMouseDown = useCallback((e) => {
+    e.preventDefault();
+    isDragging.current = true;
+    dragStartY.current = e.clientY;
+    dragStartScrollTop.current = scrollRef.current?.scrollTop || 0;
+
+    const onMove = (e) => {
+      if (!isDragging.current) return;
+      const el = scrollRef.current;
+      const track = trackRef.current;
+      if (!el || !track) return;
+      const delta = e.clientY - dragStartY.current;
+      const { scrollHeight, clientHeight } = el;
+      const thumbH = Math.max((clientHeight / scrollHeight) * track.clientHeight, 40);
+      const maxThumbTop = track.clientHeight - thumbH;
+      const scrollRatio = maxThumbTop > 0 ? delta / maxThumbTop : 0;
+      el.scrollTop = dragStartScrollTop.current + scrollRatio * (scrollHeight - clientHeight);
+    };
+
+    const onUp = () => {
+      isDragging.current = false;
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }, []);
+
+  const onTrackClick = useCallback((e) => {
+    if (e.target === thumbRef.current) return;
+    const track = trackRef.current;
+    const el = scrollRef.current;
+    if (!track || !el) return;
+    const rect = track.getBoundingClientRect();
+    const ratio = (e.clientY - rect.top) / track.clientHeight;
+    el.scrollTo({ top: ratio * (el.scrollHeight - el.clientHeight), behavior: "smooth" });
+  }, []);
+  // fim Scrollbar 
+
+  function handleClick() {
+    setContainerOpen(prev => !prev);
+  }
+
   return (
-    <div className="bg-[#31303A] min-h-screen w-screen flex overflow-x-hidden">
+    <div className="bg-[#31303A] min-h-screen max-h-screen w-screen flex overflow-hidden">
+
+      {/* Esconde scrollbar nativa do grid */}
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .thumb-custom { transition: background 0.3s ease; cursor: grab; }
+        .thumb-custom:active { cursor: grabbing; }
+        .thumb-custom:hover { background: #96DAE3 !important; }
+      `}</style>
 
       {/* NAV LATERAL */}
-      <div className="bg-[#96DAE3] flex flex-col items-center gap-7 py-6 w-16 rounded-r-2xl fixed left-0 top-1/2 -translate-y-1/2">
-        <img src="/Lupa.svg" className="w-5 cursor-pointer" />
-        <img src="/Home.svg" className="w-5 cursor-pointer" />
-        <img src="/Foguinho.svg" className="w-5 cursor-pointer" />
-        <img src="/Settings.svg" className="w-5 cursor-pointer" />
+      <div className="bg-[#96DAE3] flex flex-col items-center justify-center gap-7 h-full mt-80 py-6 w-16 rounded-r-2xl">
+        {asideIconsActive.map((item, index) => (
+          <Link key={index} to={item.link} onClick={() => {
+            setAsideIconsActive(prev => prev.map((el, i) => ({
+              ...el,
+              active: i === index
+            })))
+          }}>
+            <img src={`../../public/${item.image}.svg`} alt={item.image} className={`w-7 hover:opacity-100 transition-all duration-300 ${item.active ? "opacity-100" : "opacity-50"}`} />
+          </Link>
+        ))}
       </div>
 
       {/* CONTEÚDO */}
-      <div className="flex flex-col flex-1 p-6 pl-24 gap-4 overflow-x-hidden">
+      <div className="flex flex-col flex-1 pl-4 gap-4 overflow-x-hidden">
+        {/* Dropdown do usuário */}
+        <div className="flex items-center justify-end pr-8">
+          <div className="relative">
+            <button onClick={handleClick}
+              className={`bg-[#96DAE3] rounded-b-lg w-10 h-5 flex items-center justify-center cursor-pointer
+                        transition-all duration-300 ${containerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+              <img src="https://img.icons8.com/?size=100&id=4GrGB5l93HFc&format=png&color=31303A" className="w-4 h-4" alt="Dropdown" />
+            </button>
+
+            <div className={`absolute right-0 top-0 bg-[#96DAE3] rounded-b-xl
+                        transition-all duration-400 ease-in-out overflow-hidden
+                        ${containerOpen ? 'max-h-60 opacity-100 shadow-lg' : 'max-h-0 opacity-0'}`}>
+              <div className="flex justify-end px-3 pt-2 pb-2">
+                <button onClick={handleClick} className="text-[#31303A] transition-transform duration-300 cursor-pointer">
+                  <img src="https://img.icons8.com/?size=100&id=39787&format=png&color=000000" className="w-4 h-4" alt="Fechar" />
+                </button>
+              </div>
+              <ul className="flex flex-col px-5 gap-2 text-sm text-[#31303A] font-medium whitespace-nowrap">
+                <Link to='/conta' className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">Conta</Link>
+                <Link to='/config' className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">Configurações</Link>
+                <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">Produtos</li>
+                <Link to='/conta' className="flex items-center gap-2 text-[#CE2424] hover:translate-x-1 transition-transform duration-200 cursor-pointer pb-2">
+                  Sair
+                  <img src="https://img.icons8.com/?size=100&id=vZasO3UTBpQE&format=png&color=CE2424" className="w-4" alt="Sair" />
+                </Link>
+              </ul>
+            </div>
+          </div>
+        </div>
 
         {/* TOPO */}
         <div className="flex gap-4 items-center">
-
-          <button className="px-5 py-2 rounded-sm border-2 border-[#96DAE3] text-[#96DAE3] hover:bg-[#96DAE320] transition">
+          <button className="px-5 py-2 rounded-sm border-2 border-[#96DAE3] text-[#96DAE3] hover:bg-[#96DAE320] transition cursor-pointer">
             Filtros
           </button>
-
           <input
             placeholder="Pesquisar..."
-            className="
-              flex-1 px-3 py-2
-              text-[#96DAE3] placeholder-[#96DAE3]
-              bg-transparent border-b-2 border-transparent
-              outline-none
-              focus:border-[#96DAE3]
-              transition-all duration-300
-            "
+            className="flex w- px-3 py-2 text-[#96DAE3] placeholder-[#96DAE3] bg-transparent border-b-2 border-transparent outline-none focus:border-[#96DAE3] transition-all duration-300"
           />
         </div>
 
-        {/* GRID */}
-        <div className="flex-1 border-2 border-[#96DAE3] rounded-sm p-6 overflow-y-auto overflow-x-hidden">
+        {/* GRID + SCROLLBAR CUSTOMIZADA */}
+        <div className="flex-1 border-2 border-[#96DAE3] rounded-sm p-6 h-auto overflow-hidden flex gap-3">
 
-          <div className="grid grid-cols-4 gap-6 max-w-325 mx-auto">
+          {/* Grid com scroll oculto */}
+          <div
+            ref={scrollRef}
+            className="hide-scrollbar flex-1 overflow-y-auto"
+          >
+            <div className="grid grid-cols-4 gap-6 max-w-325 mx-auto">
 
-            {/* CARD COMPLETO */}
-            <div className="bg-[#B6B3D6] rounded-lg p-3 flex flex-col justify-between aspect-square shadow-md">
-
-              {/* IMAGEM */}
-              <div className="relative bg-white rounded-md h-[55%] flex items-center justify-center">
-
-                <span className="text-gray-400 text-sm">
-                  imagem produto
-                </span>
-
-                {/* FAVORITAR */}
-                <IoSettingsOutline className="absolute top-2 right-2 text-gray-500 text-lg cursor-pointer" />
-              </div>
-
-              {/* INFO */}
-              <div className="mt-2">
-
-                {/* NOME + MENU */}
-                <div className="flex justify-between items-center">
-                  <p className="font-semibold text-black text-sm">
-                    Nome dado ao AD
-                  </p>
-                  <FiMoreHorizontal className="text-gray-600 text-lg cursor-pointer" />
+              {/* CARD COMPLETO */}
+              <div className="bg-[#B6B3D6] rounded-lg p-3 flex flex-col justify-between aspect-square shadow-md">
+                <div className="relative bg-white rounded-md h-[55%] flex items-center justify-center">
+                  <span className="text-gray-400 text-sm">imagem produto</span>
+                  <IoSettingsOutline className="absolute top-2 right-2 text-gray-500 text-lg cursor-pointer" />
                 </div>
-
-                {/* PREÇO */}
-                <p className="text-green-700 font-semibold text-sm">
-                  R$213,86 (+)
-                </p>
-
-                {/* ESTRELAS */}
-                <div className="flex gap-1 mt-1">
-                  {[...Array(5)].map((_, i) => (
-                    <FaStar key={i} className="text-gray-700 text-xs" />
-                  ))}
-                </div>
-              </div>
-
-              {/* FOOTER */}
-              <div className="flex justify-between items-center mt-2">
-
-                <div className="flex gap-2">
-                  <div className="bg-green-600 p-1.5 rounded">
-                    <BiLike size={20} color="white" />
+                <div className="mt-2">
+                  <div className="flex justify-between items-center">
+                    <p className="font-semibold text-black text-sm">Nome dado ao AD</p>
+                    <FiMoreHorizontal className="text-gray-600 text-lg cursor-pointer" />
                   </div>
-
-                  <div className="bg-red-600 p-1.5 rounded">
-                    <BiDislike size={20} color="white" />
+                  <p className="text-green-700 font-semibold text-sm">R$213,86 (+)</p>
+                  <div className="flex gap-1 mt-1">
+                    {[...Array(5)].map((_, i) => (
+                      <FaStar key={i} className="text-gray-700 text-xs cursor-pointer" />
+                    ))}
                   </div>
                 </div>
-
-                <span className="text-green-700 text-sm font-bold">
-                  134k
-                </span>
-
+                <div className="flex justify-between items-center mt-2">
+                  <div className="flex gap-2">
+                    <div className="bg-green-600 p-1.5 rounded">
+                      <BiLike size={20} className="cursor-pointer text-white" />
+                    </div>
+                    <div className="bg-red-600 p-1.5 rounded">
+                      <BiDislike size={20} className="cursor-pointer text-white" />
+                    </div>
+                  </div>
+                  <span className="text-green-700 text-sm font-bold">134k</span>
+                </div>
               </div>
+
+              {/* QUADRADOS RESTANTES */}
+              {Array.from({ length: 11 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-lg aspect-square" />
+              ))}
+
+            </div>
+          </div>
+
+          {/* SCROLLBAR CUSTOMIZADA  */}
+          <div className="flex flex-col items-center gap-2 py-1" style={{ width: "20px" }}>
+
+            {/* Track */}
+            <div
+              ref={trackRef}
+              onClick={onTrackClick}
+              style={{
+                flex: 1,
+                width: "2px",
+                background: "#ffffff18",
+                borderRadius: "2px",
+                position: "relative",
+                cursor: "pointer",
+              }}
+            >
+
+              {/* Thumb */}
+              <div
+                ref={thumbRef}
+                onMouseDown={onMouseDown}
+                className="thumb-custom"
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  top: `${thumbStyle.top}px`,
+                  height: `${thumbStyle.height}px`,
+                  width: "3px",
+                  background: isScrolling ? "#96DAE3" : "#96DAE380",
+                  borderRadius: "3px",
+                  userSelect: "none",
+                }}
+              />
             </div>
 
-            {/* QUADRADOS RESTANTES */}
-            {Array.from({ length: 11 }).map((_, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-lg aspect-square"
-              />
-            ))}
-
+            {/* Dot fim */}
+            <div style={{
+              width: "4px", height: "4px",
+              borderRadius: "50%",
+              background: progress >= 99 ? "#96DAE3" : "#ffffff20",
+              transition: "background 0.4s ease",
+              flexShrink: 0,
+            }} />
           </div>
+          {/* FIM SCROLLBAR  */}
+
         </div>
       </div>
     </div>
