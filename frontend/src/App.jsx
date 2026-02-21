@@ -3,6 +3,7 @@ import Menu from './screens/Menu.jsx'
 import Login from './screens/login.registro/Login.jsx'
 import Register from './screens/login.registro/Register.jsx'
 import Home from './screens/Home.jsx'
+import Search from './screens/Search.jsx'
 import './index.css'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/search" element={<Search />} />
       </Routes>
       
     </>

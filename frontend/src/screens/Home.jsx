@@ -21,55 +21,72 @@ export default function Home() {
     }
 
     return (
-        <div className="bg-[#31303A] min-h-screen w-screen overflow-hidden flex">
-            
+        <div className="bg-[#31303A] min-h-screen w-screen max-w-screen overflow-hidden flex">
+
 
 
             {/* Nav lateral */}
             <div className="bg-[#96DAE3] flex flex-col items-center justify-center gap-7 h-full py-6 w-16 sticky top-0 rounded-r-2xl shrink-0">
-                <img src="../../public/Lupa.svg" alt="Lupa" className="w-5 cursor-pointer" />
-                <img src="../../public/Home.svg" alt="Casinha" className="w-5 cursor-pointer" />
-                <img src="../../public/Foguinho.svg" alt="Em alta" className="w-5 cursor-pointer" />
-                <img src="../../public/Settings.svg" alt="Configurações" className="w-5 cursor-pointer" />
+                {asideIconsActive.map((item, index) => (
+                    <Link key={index} to={item.link} onClick={() => {
+                        setAsideIconsActive(prev => prev.map((el, i) => ({
+                            ...el,
+                            active: i === index
+                        })))
+                    }}>
+                        <img src={`../../public/${item.image}.svg`} alt={item.image} className={`w-7 hover:opacity-100 transition-all duration-300 ${item.active ? "opacity-100" : "opacity-50"}`} />
+                    </Link>
+                ))}
             </div>
 
             {/* Conteúdo principal */}
-            <div className="flex flex-col flex-1 max-w-390 max-h-190 px-4 pb-4 gap-4">
+            <div className="flex flex-col flex-1 min-w-0 px-4 pb-4 gap-4">
 
                 {/* Setinha */}
                 {/* Dropdown do usuário */}
-                <div className="flex justify-end">
-                    <button className="bg-[#96DAE3] flex justify-center cursor-pointer rounded-b-xl p-1.5 w-10 outline-none">
-                        <img src="../../public/Setinha.svg" alt="arrow" className="w-4" />
-                    </button>
-                </div>
+                <div className="flex items-center justify-end">
+                    <div className="relative">
 
-                {/* Barra de mercados */}
-                <div className="flex items-center gap-8 ml-5 flex-wrap text-[#D7D7D7]">
-                    <label className="text-[#96DAE3] flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox"
-                        className="w-6 h-6 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
-                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]"/>
-                        <span>Aliexpress</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
-                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
-                        <span>Shopee</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
-                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
-                        <span>Mercado Livre</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
-                        checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
-                        <span>Amazon</span>
-                    </label>
-                    <button className="flex justify-center items-center font-medium border-2 border-[#D7D7D7] rounded-sm w-7 h-7 cursor-pointer outline-none text-[#D7D7D7]">
-                        <span className="text-xl leading-none mb-1">+</span>
-                    </button>
+                        {/* Botão trigger — some quando abre */}
+                        <button onClick={handleClick}
+                        className={`bg-[#96DAE3] rounded-b-lg w-10 h-5 flex items-center justify-center cursor-pointer
+                        transition-all duration-300 ${containerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+                            
+                            <img src="https://img.icons8.com/?size=100&id=4GrGB5l93HFc&format=png&color=31303A" className="w-4 h-4" alt="Dropdown"/>
+
+                        </button>
+
+                        {/* Dropdown */}
+                        <div className={`absolute right-0 top-0 bg-[#96DAE3] rounded-bl-xl rounded-br-xl
+                        transition-all duration-400 ease-in-out overflow-hidden
+                        ${containerOpen ? 'max-h-60 opacity-100 shadow-lg' : 'max-h-0 opacity-0'}`}>
+
+                            {/* Header do dropdown com botão fechar */}
+                            <div className="flex justify-end px-3 pt-2 pb-2">
+                                <button onClick={handleClick} className="text-[#31303A] transition-transform duration-300 cursor-pointer">
+
+                                    <img src="https://img.icons8.com/?size=100&id=39787&format=png&color=000000" className="w-4 h-4" alt="Fechar"/>
+                                </button>
+                            </div>
+
+                            <ul className="flex flex-col px-5 gap-2 text-sm text-[#31303A] font-medium whitespace-nowrap">
+                                <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
+                                    Conta
+                                </li>
+                                <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
+                                     Configurações
+                                </li>
+                                <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
+                                    Produtos
+                                </li>
+
+                                <li className="flex items-center gap-2 text-[#CE2424] hover:translate-x-1 transition-transform duration-200 cursor-pointer pb-2">
+                                    Sair
+                                    <img src="https://img.icons8.com/?size=100&id=vZasO3UTBpQE&format=png&color=CE2424" className="w-4" alt="Sair"/>
+                                </li>   
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Container cinza principal */}
@@ -91,33 +108,33 @@ export default function Home() {
                             </div>
 
                             <div className="flex flex-col gap-3">
-                                    <div className="flex gap-4 items-center">
-                                        <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
-                                            <img src="../../public/Vendas.svg" alt="Vendas" className="w-7" />
-                                        </div>
-                                        <span>Vendas: R$2.912,24 <span className="text-[#5FB057]">(+)</span> </span>
+                                <div className="flex gap-4 items-center">
+                                    <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
+                                        <img src="../../public/Vendas.svg" alt="Vendas" className="w-7" />
                                     </div>
+                                    <span>Vendas: R$2.912,24 <span className="text-[#5FB057]">(+)</span> </span>
+                                </div>
 
-                                    <div className="flex gap-4 items-center">
-                                        <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
-                                            <img src="../../public/Produtos.svg" alt="Vendas" className="w-7" />
-                                        </div>
-                                        <span>Produtos: R$1.734,86 <span className="text-[#B93F3F]">(-)</span> </span>
+                                <div className="flex gap-4 items-center">
+                                    <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
+                                        <img src="../../public/Produtos.svg" alt="Vendas" className="w-7" />
                                     </div>
+                                    <span>Produtos: R$1.734,86 <span className="text-[#B93F3F]">(-)</span> </span>
+                                </div>
 
-                                    <div className="flex gap-4 items-center">
-                                        <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
-                                            <img src="../../public/Frete.svg" alt="Vendas" className="w-7" />
-                                        </div>
-                                        <span>Frete: R$226,40 <span className="text-[#B93F3F]">(-)</span> </span>
+                                <div className="flex gap-4 items-center">
+                                    <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
+                                        <img src="../../public/Frete.svg" alt="Vendas" className="w-7" />
                                     </div>
+                                    <span>Frete: R$226,40 <span className="text-[#B93F3F]">(-)</span> </span>
+                                </div>
 
-                                    <div className="flex gap-4 items-center">
-                                        <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
-                                            <img src="../../public/Total.svg" alt="Vendas" className="w-7" />
-                                        </div>
-                                        <span>Total: <span className="text-[#5FB057]">R$950,98</span> </span>
+                                <div className="flex gap-4 items-center">
+                                    <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
+                                        <img src="../../public/Total.svg" alt="Vendas" className="w-7" />
                                     </div>
+                                    <span>Total: <span className="text-[#5FB057]">R$950,98</span> </span>
+                                </div>
                             </div>
                         </div>
 
@@ -134,26 +151,26 @@ export default function Home() {
                             </div>
 
                             <div className="flex flex-col gap-3">
-                                    <div className="flex gap-4 items-center">
-                                        <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
-                                            <img src="../../public/" alt="Vendas" className="w-7" />
-                                        </div>
-                                        <span>Lucros: R$950,98 <span className="text-[#5FB057]">(+)</span> </span>
+                                <div className="flex gap-4 items-center">
+                                    <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
+                                        <img src="../../public/" alt="Vendas" className="w-7" />
                                     </div>
+                                    <span>Lucros: R$950,98 <span className="text-[#5FB057]">(+)</span> </span>
+                                </div>
 
-                                    <div className="flex gap-4 items-center">
-                                        <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
-                                            <img src="../../public/" alt="Vendas" className="w-7" />
-                                        </div>
-                                        <span>Taxas: R$226,40 <span className="text-[#B93F3F]">(-1%)</span> </span>
+                                <div className="flex gap-4 items-center">
+                                    <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
+                                        <img src="../../public/" alt="Vendas" className="w-7" />
                                     </div>
+                                    <span>Taxas: R$226,40 <span className="text-[#B93F3F]">(-1%)</span> </span>
+                                </div>
 
-                                    <div className="flex gap-4 items-center">
-                                        <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
-                                            <img src="../../public/Total.svg" alt="Vendas" className="w-7" />
-                                        </div>
-                                        <span>Total: <span className="text-[#5FB057]">R$941,47</span> </span>
+                                <div className="flex gap-4 items-center">
+                                    <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10">
+                                        <img src="../../public/Total.svg" alt="Vendas" className="w-7" />
                                     </div>
+                                    <span>Total: <span className="text-[#5FB057]">R$941,47</span> </span>
+                                </div>
                             </div>
                         </div>
 
@@ -209,14 +226,14 @@ export default function Home() {
                                                 <span>Seleção de <span>temas</span> que pode conter na aba de filtros.</span>
                                             </div>
                                         </div>
-                                        
+
                                         <div className="flex gap-4 items-center">
                                             <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10 text-[#31303A]">
                                                 3/4
                                             </div>
                                             <span>Produtos</span>
                                         </div>
-                                        
+
                                         <div className="flex gap-4 items-center">
                                             <div className="bg-[#E5E3FF] p-2 rounded-lg max-w-10 text-[#31303A]">
                                                 0/3
