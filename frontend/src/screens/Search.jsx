@@ -5,20 +5,18 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { Link } from 'react-router-dom'
 import { useState, useRef, useCallback, useEffect } from 'react';
 
-
 export default function Search() {
 
   const asideIcons = [
-    { image: "Lupa", link: "/search", active: false },
-    { image: "Home", link: "/home", active: true },
-    { image: "Foguinho", link: "/trending", active: false },
+    { image: "Lupa", link: "/search", active: true },
+    { image: "Home", link: "/home", active: false },
     { image: "Settings", link: "/settings", active: false },
   ];
 
   const [asideIconsActive, setAsideIconsActive] = useState(asideIcons);
   const [containerOpen, setContainerOpen] = useState(false);
 
-  // Scrollbar state 
+  // Scrollbar state
   const scrollRef = useRef(null);
   const trackRef = useRef(null);
   const thumbRef = useRef(null);
@@ -35,7 +33,6 @@ export default function Search() {
     const el = scrollRef.current;
     const track = trackRef.current;
     if (!el || !track) return;
-
     const { scrollTop, scrollHeight, clientHeight } = el;
     const trackHeight = track.clientHeight;
     const thumbHeight = Math.max((clientHeight / scrollHeight) * trackHeight, 40);
@@ -43,7 +40,6 @@ export default function Search() {
     const ratio = maxScroll > 0 ? scrollTop / maxScroll : 0;
     const thumbTop = ratio * (trackHeight - thumbHeight);
     const prog = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
-
     setThumbStyle({ top: thumbTop, height: thumbHeight });
     setProgress(prog);
   }, []);
@@ -106,16 +102,15 @@ export default function Search() {
     const ratio = (e.clientY - rect.top) / track.clientHeight;
     el.scrollTo({ top: ratio * (el.scrollHeight - el.clientHeight), behavior: "smooth" });
   }, []);
-  // fim Scrollbar 
 
   function handleClick() {
     setContainerOpen(prev => !prev);
   }
 
   return (
-    <div className="bg-[#31303A] min-h-screen max-h-screen w-screen flex overflow-hidden">
+    // Tela inteira, nada vaza pra fora
+    <div className="bg-[#31303A] h-screen w-screen overflow-hidden flex">
 
-      {/* Esconde scrollbar nativa do grid */}
       <style>{`
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -124,8 +119,8 @@ export default function Search() {
         .thumb-custom:hover { background: #96DAE3 !important; }
       `}</style>
 
-      {/* NAV LATERAL */}
-      <div className="bg-[#96DAE3] flex flex-col items-center justify-center gap-7 h-full mt-80 py-6 w-16 rounded-r-2xl">
+      {/* NAV LATERAL — altura natural, centralizada verticalmente */}
+      <div className="bg-[#96DAE3] flex flex-col items-center justify-center gap-7 h-fit self-center py-6 w-16 rounded-r-2xl shrink-0">
         {asideIconsActive.map((item, index) => (
           <Link key={index} to={item.link} onClick={() => {
             setAsideIconsActive(prev => prev.map((el, i) => ({
@@ -133,25 +128,32 @@ export default function Search() {
               active: i === index
             })))
           }}>
-            <img src={`../../public/${item.image}.svg`} alt={item.image} className={`w-7 hover:opacity-100 transition-all duration-300 ${item.active ? "opacity-100" : "opacity-50"}`} />
+            <img
+              src={`../../public/${item.image}.svg`}
+              alt={item.image}
+              className={`w-7 hover:opacity-100 transition-all duration-300 ${item.active ? "opacity-100" : "opacity-50"}`}
+            />
           </Link>
         ))}
       </div>
 
-      {/* CONTEÚDO */}
-      <div className="flex flex-col flex-1 pl-4 gap-4 overflow-x-hidden">
+      {/* COLUNA DIREITA — ocupa o espaço restante, sem overflow */}
+      <div className="flex flex-col flex-1 min-w-0 px-4 pb-4 gap-4 overflow-hidden">
+
         {/* Dropdown do usuário */}
-        <div className="flex items-center justify-end pr-8">
+        <div className="flex items-center justify-end shrink-0">
           <div className="relative">
-            <button onClick={handleClick}
+            <button
+              onClick={handleClick}
               className={`bg-[#96DAE3] rounded-b-lg w-10 h-5 flex items-center justify-center cursor-pointer
-                        transition-all duration-300 ${containerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+                transition-all duration-300 ${containerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+            >
               <img src="https://img.icons8.com/?size=100&id=4GrGB5l93HFc&format=png&color=31303A" className="w-4 h-4" alt="Dropdown" />
             </button>
 
-            <div className={`absolute right-0 top-0 bg-[#96DAE3] rounded-b-xl
-                        transition-all duration-400 ease-in-out overflow-hidden
-                        ${containerOpen ? 'max-h-60 opacity-100 shadow-lg' : 'max-h-0 opacity-0'}`}>
+            <div className={`absolute right-0 top-0 bg-[#96DAE3] rounded-b-xl z-50
+                transition-all duration-400 ease-in-out overflow-hidden
+                ${containerOpen ? 'max-h-60 opacity-100 shadow-lg' : 'max-h-0 opacity-0'}`}>
               <div className="flex justify-end px-3 pt-2 pb-2">
                 <button onClick={handleClick} className="text-[#31303A] transition-transform duration-300 cursor-pointer">
                   <img src="https://img.icons8.com/?size=100&id=39787&format=png&color=000000" className="w-4 h-4" alt="Fechar" />
@@ -170,26 +172,23 @@ export default function Search() {
           </div>
         </div>
 
-        {/* TOPO */}
-        <div className="flex gap-4 items-center">
-          <button className="px-5 py-2 rounded-sm border-2 border-[#96DAE3] text-[#96DAE3] hover:bg-[#96DAE320] transition cursor-pointer">
+        {/* BARRA DE PESQUISA */}
+        <div className="flex gap-4 items-center shrink-0">
+          <button className="px-5 py-2 rounded-sm border-2 border-[#96DAE3] text-[#96DAE3] hover:bg-[#96DAE320] transition cursor-pointer shrink-0">
             Filtros
           </button>
           <input
             placeholder="Pesquisar..."
-            className="flex w- px-3 py-2 text-[#96DAE3] placeholder-[#96DAE3] bg-transparent border-b-2 border-transparent outline-none focus:border-[#96DAE3] transition-all duration-300"
+            className="w-full px-3 py-2 text-[#96DAE3] placeholder-[#96DAE3] bg-transparent border-b-2 border-transparent outline-none focus:border-[#96DAE3] transition-all duration-300"
           />
         </div>
 
-        {/* GRID + SCROLLBAR CUSTOMIZADA */}
-        <div className="flex-1 border-2 border-[#96DAE3] rounded-sm p-6 h-auto overflow-hidden flex gap-3">
+        {/* CONTAINER DO GRID — cresce para preencher o espaço restante, overflow isolado aqui */}
+        <div className="flex-1 min-h-0 border-2 border-[#96DAE3] rounded-sm p-6 flex gap-3 overflow-hidden">
 
-          {/* Grid com scroll oculto */}
-          <div
-            ref={scrollRef}
-            className="hide-scrollbar flex-1 overflow-y-auto"
-          >
-            <div className="grid grid-cols-4 gap-6 max-w-325 mx-auto">
+          {/* Área scrollável — scroll vertical apenas aqui, scrollbar nativa oculta */}
+          <div ref={scrollRef} className="hide-scrollbar flex-1 overflow-y-auto overflow-x-hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
               {/* CARD COMPLETO */}
               <div className="bg-[#B6B3D6] rounded-lg p-3 flex flex-col justify-between aspect-square shadow-md">
@@ -230,10 +229,8 @@ export default function Search() {
             </div>
           </div>
 
-          {/* SCROLLBAR CUSTOMIZADA  */}
-          <div className="flex flex-col items-center gap-2 py-1" style={{ width: "20px" }}>
-
-            {/* Track */}
+          {/* SCROLLBAR CUSTOMIZADA */}
+          <div className="flex flex-col items-center gap-2 py-1 shrink-0" style={{ width: "20px" }}>
             <div
               ref={trackRef}
               onClick={onTrackClick}
@@ -246,8 +243,6 @@ export default function Search() {
                 cursor: "pointer",
               }}
             >
-
-              {/* Thumb */}
               <div
                 ref={thumbRef}
                 onMouseDown={onMouseDown}
@@ -265,8 +260,6 @@ export default function Search() {
                 }}
               />
             </div>
-
-            {/* Dot fim */}
             <div style={{
               width: "4px", height: "4px",
               borderRadius: "50%",
@@ -275,7 +268,6 @@ export default function Search() {
               flexShrink: 0,
             }} />
           </div>
-          {/* FIM SCROLLBAR  */}
 
         </div>
       </div>
