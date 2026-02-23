@@ -122,15 +122,15 @@ export default function Home() {
                 {/* Container cinza principal */}
                 {/* CORRIGIDO: "min-w-450 max-w-460" → w-full; "max-h-220" fixo removido (cortava conteúdo);
                     "gap-15" não é classe Tailwind válida → gap-6 */}
-                <div className="flex flex-col bg-[#49475B] w-full rounded-xl p-3.5 gap-6 flex-1">
+                <div className="flex flex-col bg-[#49475B] w-full rounded-xl p-3.5 gap-15 flex-1">
 
                     {/* Section top — 3 cards */}
                     {/* CORRIGIDO: "w-445 h-85" fixos removidos → w-full flex-wrap para responsividade */}
-                    <div className="flex flex-wrap gap-5 w-full">
+                    <div className="flex gap-5 w-full">
 
                         {/* Card Bruto */}
                         {/* CORRIGIDO: "w-80" fixo → flex-1 min-w-[200px] para crescer/encolher proporcionalmente */}
-                        <div className="bg-[#31303A] text-[#E5E3FF] flex flex-col gap-10 font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 px-2 pb-3 flex-1 min-w-50">
+                        <div className="bg-[#31303A] text-[#E5E3FF] flex flex-col gap-10 font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 px-2 pb-3 min-w-65">
                             <div className="flex text-[#31303A] gap-0.5 flex-wrap">
                                 <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-l-sm text-sm">1 Dia</span>
                                 <span className="bg-[#E5E3FF] cursor-pointer p-0.5 text-sm">3 Dias</span>
@@ -172,7 +172,7 @@ export default function Home() {
 
                         {/* Card Líquido */}
                         {/* CORRIGIDO: "w-80" fixo → flex-1 min-w-[200px] */}
-                        <div className="bg-[#31303A] text-[#E5E3FF] flex flex-col gap-10 font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 px-2 pb-3 flex-1 min-w-50">
+                        <div className="bg-[#31303A] text-[#E5E3FF] flex flex-col gap-10 font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 px-2 pb-3 min-w-65">
                             <div className="flex text-[#31303A] gap-0.5 flex-wrap">
                                 <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-l-sm text-sm">1 Dia</span>
                                 <span className="bg-[#E5E3FF] cursor-pointer p-0.5 text-sm">3 Dias</span>
@@ -207,7 +207,7 @@ export default function Home() {
                         {/* Card Gráfico */}
                         {/* CORRIGIDO: "w-275" fixo → flex-[2] min-w-[260px] para ser proporcionalmente maior;
                             "gap-163" completamente inválido/absurdo → justify-between para empurrar os grupos para as pontas */}
-                        <div className="bg-[#31303A] text-[#31303A] flex flex-col font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-2 pb-3 px-2 flex-2 min-w-65">
+                        <div className="bg-[#31303A] text-[#31303A] flex flex-col font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-2 pb-3 px-2 min-w-229">
                             <div className="flex justify-between items-start flex-wrap gap-2">
                                 <div className="flex gap-0.5">
                                     <span className="bg-[#5E5991] cursor-pointer rounded-l-lg text-[#E5E3FF] px-1.5 py-0.5 text-sm">Visualizações</span>
@@ -230,7 +230,7 @@ export default function Home() {
                     <div className="flex flex-wrap justify-between gap-5 w-full">
 
                         {/* Esquerda: GoogleAds + Plano */}
-                        <div className="flex flex-wrap gap-5 flex-1 min-w-0">
+                        <div className="flex flex-wrap gap-5 min-w-140">
 
                             {/* GoogleAds */}
                             {/* CORRIGIDO: "w-100" fixo → flex-1 min-w-[160px] min-h para ter altura mínima visível */}
@@ -243,7 +243,7 @@ export default function Home() {
                             {/* Plano */}
                             {/* CORRIGIDO: "w-70" fixo → flex-1 min-w-[180px];
                                 "gap-28" fixo que empurrava o botão para fora → justify-between */}
-                            <div className="bg-[#31303A] text-[#FFFFFF] flex flex-col justify-between font-medium flex-1 min-w-45 rounded-xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] shrink-0 overflow-hidden">
+                            <div className="bg-[#31303A] text-[#FFFFFF] flex flex-col justify-between font-medium flex-1 max-w-55 rounded-xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] shrink-0 overflow-hidden">
                                 <div className="flex flex-col gap-2">
                                     <div className="bg-[#E5E3FF] text-[#31303A] justify-center text-center p-2 font-semibold">
                                         <span>Plano mensal: 80$</span>
@@ -253,7 +253,7 @@ export default function Home() {
                                         <div className="flex gap-4 items-center">
                                             {/* CORRIGIDO: "max-w-10" → shrink-0 com largura mínima fixa para o badge */}
                                             <div className="bg-[#E5E3FF] p-2 rounded-lg shrink-0 text-[#31303A] text-sm min-w-9 text-center">
-                                                3/4
+                                                a
                                             </div>
                                             <div className="flex flex-col">
                                                 <p>Temas</p>
@@ -294,9 +294,7 @@ export default function Home() {
                                 </button>
                             </div>
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </div>
