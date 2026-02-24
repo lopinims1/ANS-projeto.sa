@@ -7,7 +7,6 @@ export default function Home() {
     const asideIcons = [
         { image: "Lupa", link: "/search", active: false },
         { image: "Home", link: "/home", active: true },
-        { image: "Foguinho", link: "/trending", active: false },
         { image: "Settings", link: "/settings", active: false },
     ];
 

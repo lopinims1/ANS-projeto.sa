@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom'
 
+import Purse from '../assets/PlansIcons/Purse.svg'
+import List from '../assets/PlansIcons/List.svg'
+import Models from '../assets/PlansIcons/Models.svg'
+import Alert from '../assets/PlansIcons/Alert.svg'
+import Foguinho from '../assets/PlansIcons/Foguinho.svg'
+
+import WinIcon from '../assets/OsIcons/WinIcon.svg'
+import LinuxIcon from '../assets/OsIcons/LinuxIcon.svg'
+import MacIcon from '../assets/OsIcons/MacIcon.svg'
+
 export default function Menu() {
     const headerInfos = [
         { title: "Home", link: "/home", active: false },
@@ -22,44 +32,61 @@ export default function Menu() {
         }
     }
 
+    const OsIcons = { WinIcon, LinuxIcon, MacIcon };
+
+    const installOs = [
+        { title: "Windows", image: "WinIcon" },
+        { title: "Linux", image: "LinuxIcon" },
+        { title: "Mac", image: "MacIcon" },
+    ];
+
+    const planIcons = { Purse, List, Models, Alert, Foguinho };
+
     const infoPlans = [
         {
             title: "Básico",
             infos: [
-                { icon: "", text: "Até 2 produtos por conta/loja" },
-                { icon: "", text: "Até 1 relatórios por mês" },
-                { icon: "", text: "2 variações de cor" },
-                { icon: "", text: "Lojas em alta (1)" },
+                { image: "Purse", text: "Até 2 produtos por conta/loja" },
+                { image: "List", text: "Até 1 relatórios por mês" },
+                { image: "Models", text: "2 variações de cor" },
+                { image: "Foguinho", text: "Lojas em alta (1)" },
             ],
             link: "/",
             btn: "ASSINAR",
             popular: false,
+            basic: true,
+            premium: false,
         },
         {
             title: "Popular",
             infos: [
-                { icon: "", text: "Até 4 produtos por conta/loja" },
-                { icon: "", text: "Até 3 relatórios por mês" },
-                { icon: "", text: "5 variações de cor, 2 de modelo e 2 extra" },
-                { icon: "", text: "Alerta de produtos (Com fila)" },
-                { icon: "", text: "Lojas em alta (3)" },
+                { image: "Purse", text: "Até 4 produtos por conta/loja" },
+                { image: "List", text: "Até 3 relatórios por mês" },
+                { image: "Models", text: "5 variações de cor, 2 de modelo e 2 extra" },
+                { image: "Alert", text: "Alerta de produtos (Com fila)" },
+                { image: "Foguinho", text: "Lojas em alta (3)" },
             ],
+
             link: "/",
             btn: "ASSINAR",
             popular: true,
+            basic: false,
+            premium: false,
         },
         {
             title: "Premium",
             infos: [
-                { icon: "", text: "Até 8 produtos por conta/loja" },
-                { icon: "", text: "Até 8 relatórios por mês" },
-                { icon: "", text: "8 variações de cor, 5 de modelo e 3 extra" },
-                { icon: "", text: "Alerta de produtos (Sem fila)" },
-                { icon: "", text: "Lojas em alta (3)" },
+                { image: "Purse", text: "Até 8 produtos por conta/loja" },
+                { image: "List", text: "Até 8 relatórios por mês" },
+                { image: "Models", text: "8 variações de cor, 5 de modelo e 3 extra" },
+                { image: "Alert", text: "Alerta de produtos (Sem fila)" },
+                { image: "Foguinho", text: "Lojas em alta (3)" },
             ],
             link: "/",
             btn: "ASSINAR",
             popular: false,
+            basic: false,
+            premium: true,
         },
     ];
 
@@ -89,7 +116,7 @@ export default function Menu() {
 
                     {/* Animação do botão de login e registro */}
                     <button id='authBtn' onClick={handleClick}
-                        className={`relative overflow-hidden bg-gray-700 rounded-b-lg flex items-center justify-center
+                        className={`relative overflow-hidden bg-[#3B3A48] rounded-b-lg flex items-center justify-center
                         duration-600 ${containerOpen ? 'w-48 h-14 px-4' : 'w-14 h-14'}`}>
 
                         <img id='authIcon' src="https://img.icons8.com/?size=100&id=9r19HDmevkSh&format=png&color=96DAE3"
@@ -113,7 +140,7 @@ export default function Menu() {
 
             <main id='mainBody' className="bg-[#96DAE3] text-[#31303A] flex items-center justify-center px-10 py-10">
 
-                <div className='flex items-center justify-between max-w-7xl'>
+                <div className='flex items-center justify-between w-full max-w-7xl'>
                     <div className='flex flex-col'>
                         <h1 className="sansation text-6xl font-bold">ANS</h1>
                         <h3 className='mt-2 text-4xl font-bold'>Automatic National Shipping.</h3>
@@ -123,10 +150,18 @@ export default function Menu() {
                             <p>Nosso objetivo é simplificar processos, reduzir riscos e tornar o dropshipping e a revenda online mais acessíveis, eficientes e estratégicos para qualquer pessoa que deseja empreender no e-commerce.</p>
                         </div>
                     </div>
-                    <img className='mt-15 w-[45%]' src="./imgProvisoria.png" alt="" />
+                    <div className='flex items-center mt-100 gap-5'>
+                        {installOs.map(os => (
+                            <button id='OsInstallBtn' key={os.image} className='bg-[#3B3A48] rounded-md p-2 w-15 h-15 flex items-center justify-center cursor-pointer shadow-lg shadow-'>
+                                <img src={OsIcons[os.image]} alt={os.title} className='w-full h-full object-contain' />
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </main>
+
             <img className='w-full' src="./bottomMain.svg" />
+
 
             <section className='flex justify-center w-full py-10 h-130 text-white'>
                 <div className='flex justify-between w-full max-w-7xl'>
@@ -134,6 +169,10 @@ export default function Menu() {
                     <div className='w-full max-w-2xl flex flex-col gap-5 text-lg font-normal'>
                         <p>A ANS Automatic National Shipping é uma plataforma que identifica oportunidades reais de revenda e dropshipping por meio de automação e análise de mercado. O sistema cruza dados de preços, demanda e viabilidade comercial para encontrar produtos com alto potencial de lucro e competitividade no mercado nacional.  </p>
                         <p>Em vez de tentativas aleatórias, a ANS entrega decisões baseadas em dados. A plataforma organiza informações estratégicas, reduz riscos operacionais e otimiza o tempo de quem busca estruturar um negócio de revenda online de forma profissional, escalável e sustentável.</p>
+                    </div>
+
+                    <div className='max-w-200'>
+                        <img src="../public/MenuPhoto.png" alt="" className='w-full' />
                     </div>
                 </div>
             </section>
@@ -144,28 +183,31 @@ export default function Menu() {
                         <div
                             key={plan.title}
                             style={{
-                                background: plan.popular ? 'linear-gradient(to top, #1D1C2A, transparent) border-2 border-[#96DAE3]' : 'linear-gradient(to top, #3f3e4d, transparent)',
+                                background: plan.popular ? 'linear-gradient(to top, #96DAE3, #3f3e4d, transparent)' : 'linear-gradient(to bottom, #3f3e4d, transparent)',
                                 padding: '2px',
-                                borderRadius: '1rem',
+                                borderRadius: plan.popular ? '1rem' : '',
                             }}
-                            className={`transition-all duration-300 ${plan.popular ? 'scale-105 shadow-[0_0_30px_rgba(150,218,227,0.2)]' : ''}`}
+                            className={`transition-all duration-300 ${plan.popular ? 'scale-105 ' : ''}`}
                         >
-                            <div className={`flex flex-col justify-between rounded-2xl p-6 bg-linear-to-t from-[#1D1C2A] via-[#1d1c2aa1] to-transparent
-                            ${plan.popular ? 'min-h-105 w-105' : 'min-h-95 w-95'}`}
+                            <div className={`flex flex-col justify-between p-6 bg-linear-to-t from-[#1D1C2A] via-[#1d1c2aa1] to-transparent
+                            ${plan.popular ? 'min-h-105 w-105 rounded-2xl' : 'min-h-95 w-95'} ${plan.premium ? 'rounded-r-2xl' : ''} ${plan.basic ? 'rounded-l-2xl' : ''}`}
                             >
                                 <ul className='flex flex-col gap-4 mb-6'>
                                     {plan.infos.map((info, i) => (
-                                        <li key={i} className='flex items-center gap-3 text-sm text-[#96DAE3]'>
-                                            <span className='text-base'>{info.icon}</span>
+                                        <li key={i} className='flex items-center gap-4 text-sm text-[#96DAE3]'>
+                                            <div className='flex items-center justify-center bg-[#96DAE3] rounded-sm p-1'>
+                                                <img src={planIcons[info.image]} alt={info.image} className='w-6 h-6' />
+                                            </div>
                                             <span className='text-sm font-semibold'>{info.text}</span>
                                         </li>
                                     ))}
                                 </ul>
 
                                 <div className='flex flex-col items-center gap-2 mt-auto'>
-                                    {plan.popular && (
+                                    {plan && (
                                         <a href={plan.link}
-                                            className='w-full text-center bg-[#96DAE3] text-[#2a2935] font-bold py-2 rounded-md hover:brightness-110 transition-all'>
+                                            className={`w-70 text-center bg-[#96DAE3] text-[#2a2935] font-bold py-2 rounded-sm duration-600 transition-all ease-in-out
+                                                ${plan.popular ? 'opacity-100' : 'opacity-0 hover:opacity-100'}`}>
                                             {plan.btn}
                                         </a>
                                     )}
