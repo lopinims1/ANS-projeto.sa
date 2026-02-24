@@ -6,8 +6,14 @@ export default function Conta() {
         // Página inteira
         <div className="bg-[#31303A] min-h-screen max-w-screen overflow-x-hidden pt-23 pl-34">
 
+            <div className='pb-4'>
+                <div className='bg-[#3C3A47] flex justify-center rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] p-3 max-w-14 cursor-pointer'>
+                    <button onClick={() => window.history.back()} className='cursor-pointer'> <img src="../public/Voltar.svg" alt="Voltar" className='w-4.5' /> </button>
+                </div>
+            </div>
+
             {/* Conteúdo principal */}
-            <div className="bg-[#3C3A47] text-[#FFFFFF] text-lg font-medium rounded-2xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] flex max-w-372 min-h-180 pl-3 pt-3 pb-3 gap-8">
+            <div className="bg-[#3C3A47] text-[#FFFFFF] text-lg font-medium rounded-2xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] flex max-w-372 min-h-160 pl-3 pt-3 pb-3 gap-8">
                 <div className="flex flex-col gap-3 pt-4">
                     <button className="bg-[#2E2D37] p-2 pr-3 pl-10 rounded-md cursor-pointer min-w-36">Minha conta</button>
 
@@ -16,7 +22,7 @@ export default function Conta() {
                     </Link>
                 </div>
 
-                <div className="border-1 border-[#96DAE3] min-h-full"> </div> {/* Div vazia */}
+                <div className="border border-[#96DAE3] min-h-full"> </div> {/* Div vazia */}
 
                 <div className="flex flex-col min-w-308 gap-6 pt-2 pl-2"> {/* Info */}
                     <div className="flex flex-col"> {/* E-mail */}
@@ -61,7 +67,7 @@ export default function Conta() {
                             <div className="flex gap-3"> {/* Estado, Cidade, Rua */}
                                 <div className="flex flex-col max-w-50">
                                     <p className="pl-4">Estado</p>
-                                    <input type="text" placeholder="Diddy’s States" className="bg-[#2E2D37] rounded-md p-2.5 pl-5 placeholder:text-[#FFFFFF]" />
+                                    <input type="text" placeholder="Diddys States" className="bg-[#2E2D37] rounded-md p-2.5 pl-5 placeholder:text-[#FFFFFF]" />
                                 </div>
 
                                 <div className="flex flex-col max-w-50">
