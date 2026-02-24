@@ -22,7 +22,7 @@ export default function Conta() {
                     </Link>
                 </div>
 
-                <div className="border-1 border-[#96DAE3] min-h-full"> </div> {/* Div vazia */}
+                <div className="border border-[#96DAE3] min-h-full"> </div> {/* Div vazia */}
 
                 <div className="flex flex-col min-w-308 gap-6 pt-2 pl-2"> {/* Info */}
                     <div className="flex flex-col"> {/* E-mail */}
@@ -67,7 +67,7 @@ export default function Conta() {
                             <div className="flex gap-3"> {/* Estado, Cidade, Rua */}
                                 <div className="flex flex-col max-w-50">
                                     <p className="pl-4">Estado</p>
-                                    <input type="text" placeholder="Diddy’s States" className="bg-[#2E2D37] rounded-md p-2.5 pl-5 placeholder:text-[#FFFFFF]" />
+                                    <input type="text" placeholder="Diddys States" className="bg-[#2E2D37] rounded-md p-2.5 pl-5 placeholder:text-[#FFFFFF]" />
                                 </div>
 
                                 <div className="flex flex-col max-w-50">
