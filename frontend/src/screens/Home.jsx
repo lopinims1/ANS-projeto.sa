@@ -74,7 +74,7 @@ export default function Home() {
                                     Conta
                                 </Link>
 
-                                <Link to='/config' onClick={e => e.stopPropagation()} className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
+                                <Link to='/conta' onClick={e => e.stopPropagation()} className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
                                     Configurações
                                 </Link>
 
