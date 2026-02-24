@@ -19,6 +19,17 @@ export default function Home() {
         setContainerOpen(prev => !prev);
     }
 
+    const [adModalOpen, setAdModalOpen] = useState(false);
+    const [adForm, setAdForm] = useState({ nome: '', link: '', descricao: '' });
+    const [adsList, setAdsList] = useState([]);
+
+    function handlePostarAd() {
+        if (!adForm.nome.trim()) return;
+        setAdsList(prev => [...prev, { ...adForm, id: Date.now(), visualizacoes: 0, cliques: 0, compras: 0 }]);
+        setAdModalOpen(false);
+        setAdForm({ nome: '', link: '', descricao: '' });
+    }
+
     return (
         // CORRIGIDO: removido "max-w-screen overflow-hidden" que cortava conteúdo → overflow-x-hidden apenas
         <div className="bg-[#31303A] min-h-screen w-screen overflow-x-hidden flex">
@@ -51,9 +62,9 @@ export default function Home() {
 
                         {/* Botão trigger — some quando abre */}
                         <button onClick={handleClick}
-                        className={`bg-[#96DAE3] rounded-b-lg w-10 h-5 flex items-center justify-center cursor-pointer
+                            className={`bg-[#96DAE3] rounded-b-lg w-10 h-5 flex items-center justify-center cursor-pointer
                         transition-all duration-300 ${containerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-                            <img src="https://img.icons8.com/?size=100&id=4GrGB5l93HFc&format=png&color=31303A" className="w-4 h-4" alt="Dropdown"/>
+                            <img src="https://img.icons8.com/?size=100&id=4GrGB5l93HFc&format=png&color=31303A" className="w-4 h-4" alt="Dropdown" />
                         </button>
 
                         {/* Dropdown */}
@@ -64,7 +75,7 @@ export default function Home() {
                             {/* Header do dropdown com botão fechar */}
                             <div className="flex justify-end px-3 pt-2 pb-2">
                                 <button onClick={handleClick} className="text-[#31303A] transition-transform duration-300 cursor-pointer">
-                                    <img src="https://img.icons8.com/?size=100&id=39787&format=png&color=000000" className="w-4 h-4" alt="Fechar"/>
+                                    <img src="https://img.icons8.com/?size=100&id=39787&format=png&color=000000" className="w-4 h-4" alt="Fechar" />
                                 </button>
                             </div>
 
@@ -78,13 +89,13 @@ export default function Home() {
                                     Configurações
                                 </Link>
 
-                                <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">
+                                <li className="hover:translate-x-1 font-bold transition-transform duration-200 cursor-pointer">
                                     Produtos
                                 </li>
 
                                 <Link to='/conta' onClick={e => e.stopPropagation()} className="flex items-center gap-2 text-[#CE2424] hover:translate-x-1 transition-transform duration-200 cursor-pointer pb-2">
                                     Sair
-                                    <img src="https://img.icons8.com/?size=100&id=vZasO3UTBpQE&format=png&color=CE2424" className="w-4" alt="Sair"/>
+                                    <img src="https://img.icons8.com/?size=100&id=vZasO3UTBpQE&format=png&color=CE2424" className="w-4" alt="Sair" />
                                 </Link>
                             </ul>
                         </div>
@@ -95,7 +106,7 @@ export default function Home() {
                 <div className="flex items-center gap-8 ml-5 flex-wrap text-[#D7D7D7]">
                     <label className="text-[#96DAE3] flex items-center gap-2 cursor-pointer">
                         <input type="checkbox"
-                        className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
+                            className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3]
                         checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]"/>
                         <span>Aliexpress</span>
                     </label>
@@ -132,10 +143,10 @@ export default function Home() {
                         {/* CORRIGIDO: "w-80" fixo → flex-1 min-w-[200px] para crescer/encolher proporcionalmente */}
                         <div className="bg-[#31303A] text-[#E5E3FF] flex flex-col gap-10 font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 px-2 pb-3 min-w-65">
                             <div className="flex text-[#31303A] gap-0.5 flex-wrap">
-                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-l-sm text-sm">1 Dia</span>
+                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-l-[3px] text-sm">1 Dia</span>
                                 <span className="bg-[#E5E3FF] cursor-pointer p-0.5 text-sm">3 Dias</span>
                                 <span className="bg-[#5E5991] cursor-pointer text-[#E5E3FF] p-0.5 text-sm">2 Semanas</span>
-                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-r-sm text-sm">1 Mês</span>
+                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-r-[3px] text-sm">1 Mês</span>
                             </div>
 
                             <div className="flex flex-col gap-3">
@@ -174,23 +185,23 @@ export default function Home() {
                         {/* CORRIGIDO: "w-80" fixo → flex-1 min-w-[200px] */}
                         <div className="bg-[#31303A] text-[#E5E3FF] flex flex-col gap-10 font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 px-2 pb-3 min-w-65">
                             <div className="flex text-[#31303A] gap-0.5 flex-wrap">
-                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-l-sm text-sm">1 Dia</span>
+                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-l-[3px] text-sm">1 Dia</span>
                                 <span className="bg-[#E5E3FF] cursor-pointer p-0.5 text-sm">3 Dias</span>
                                 <span className="bg-[#5E5991] cursor-pointer text-[#E5E3FF] p-0.5 text-sm">2 Semanas</span>
-                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-r-sm text-sm">1 Mês</span>
+                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-r-[3px] text-sm">1 Mês</span>
                             </div>
 
                             <div className="flex flex-col gap-3">
                                 <div className="flex gap-4 items-center">
                                     <div className="bg-[#E5E3FF] p-2 rounded-lg shrink-0">
-                                        <img src="../../public/" alt="Lucros" className="w-7" />
+                                        <img src="../../public/Lucros.svg" alt="Lucros" className="w-7" />
                                     </div>
                                     <span className="text-sm">Lucros: R$950,98 <span className="text-[#5FB057]">(+)</span></span>
                                 </div>
 
                                 <div className="flex gap-4 items-center">
                                     <div className="bg-[#E5E3FF] p-2 rounded-lg shrink-0">
-                                        <img src="../../public/" alt="Taxas" className="w-7" />
+                                        <img src="../../public/Taxas.svg" alt="Taxas" className="w-7" />
                                     </div>
                                     <span className="text-sm">Taxas: R$226,40 <span className="text-[#B93F3F]">(-1%)</span></span>
                                 </div>
@@ -210,16 +221,16 @@ export default function Home() {
                         <div className="bg-[#31303A] text-[#31303A] flex flex-col font-medium rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-2 pb-3 px-2 min-w-229">
                             <div className="flex justify-between items-start flex-wrap gap-2">
                                 <div className="flex gap-0.5">
-                                    <span className="bg-[#5E5991] cursor-pointer rounded-l-lg text-[#E5E3FF] px-1.5 py-0.5 text-sm">Visualizações</span>
+                                    <span className="bg-[#5E5991] cursor-pointer rounded-l-[3px] text-[#E5E3FF] px-1.5 py-0.5 text-sm">Visualizações</span>
                                     <span className="bg-[#E5E3FF] cursor-pointer px-1.5 py-0.5 text-sm">Cliques</span>
-                                    <span className="bg-[#E5E3FF] cursor-pointer px-1.5 py-0.5 text-sm">Compras</span>
+                                    <span className="bg-[#E5E3FF] cursor-pointer rounded-r-[3px] px-1.5 py-0.5 text-sm">Compras</span>
                                 </div>
 
                                 <div className="flex gap-0.5">
-                                    <span className="bg-[#E5E3FF] cursor-pointer px-1.5 py-0.5 text-sm">1Dia</span>
+                                    <span className="bg-[#E5E3FF] cursor-pointer rounded-l-[3px] px-1.5 py-0.5 text-sm">1Dia</span>
                                     <span className="bg-[#E5E3FF] cursor-pointer px-1.5 py-0.5 text-sm">5Dias</span>
                                     <span className="bg-[#E5E3FF] cursor-pointer px-1.5 py-0.5 text-sm">2Semanas</span>
-                                    <span className="bg-[#5E5991] cursor-pointer rounded-r-lg text-[#E5E3FF] px-1.5 py-0.5 text-sm">1Mês</span>
+                                    <span className="bg-[#5E5991] cursor-pointer rounded-r-[3px] text-[#E5E3FF] px-1.5 py-0.5 text-sm">1Mês</span>
                                 </div>
                             </div>
                         </div>
@@ -234,10 +245,74 @@ export default function Home() {
 
                             {/* GoogleAds */}
                             {/* CORRIGIDO: "w-100" fixo → flex-1 min-w-[160px] min-h para ter altura mínima visível */}
-                            <div className="bg-[url('../../public/GoogleAds.svg')] bg-no-repeat bg-cover flex flex-col-reverse flex-1 min-w-40 min-h-45 rounded-xl shrink-0">
-                                <button className="bg-[#2C2399] text-[#E5E3FF] p-4 font-medium cursor-pointer outline-none rounded-b-xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] w-full">
-                                    Conectar GoogleAds
-                                </button>
+                            <div className="flex flex-col gap-3 min-w-82 shrink-0">
+
+                                {/* Botão adicionar novo AD */}
+                                <div className="bg-[url('../../public/GoogleAds.svg')] bg-no-repeat bg-cover flex flex-col-reverse min-h-45 rounded-xl">
+                                    <button
+                                        onClick={() => setAdModalOpen(true)}
+                                        className="bg-[#2C2399] text-[#E5E3FF] p-4 font-medium cursor-pointer outline-none rounded-b-xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] w-full"
+                                    >
+                                        Conectar GoogleAds
+                                    </button>
+                                </div>
+
+                                {/* Lista de ADs postados */}
+                                {adsList.length > 0 && (
+                                    <div className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1">
+                                        {adsList.map((ad) => (
+                                            <div
+                                                key={ad.id}
+                                                className="bg-[#49475B] rounded-xl flex items-center gap-3 px-3 py-2 shadow-md"
+                                            >
+                                                {/* Thumbnail */}
+                                                <div className="bg-[#E5E3FF] rounded-lg w-14 h-14 shrink-0 overflow-hidden flex items-center justify-center">
+                                                    <img src="../../public/GoogleAds.svg" alt="ad" className="w-12 h-12 object-cover" />
+                                                </div>
+
+                                                {/* Info */}
+                                                <div className="flex flex-col flex-1 min-w-0">
+                                                    <span className="text-[#E5E3FF] font-semibold text-sm truncate">{ad.nome}</span>
+                                                    <div className="flex items-center gap-3 mt-1 text-[#D7D7D7] text-xs">
+                                                        {/* Visualizações */}
+                                                        <span className="flex items-center gap-1">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                            </svg>
+                                                            {ad.visualizacoes.toLocaleString('pt-BR')}
+                                                        </span>
+                                                        {/* Cliques */}
+                                                        <span className="flex items-center gap-1">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
+                                                            </svg>
+                                                            {ad.cliques}
+                                                        </span>
+                                                        {/* Compras */}
+                                                        <span className="flex items-center gap-1">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                            </svg>
+                                                            {ad.compras}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                {/* Menu 3 pontos */}
+                                                <button
+                                                    className="text-[#D7D7D7] hover:text-white transition-colors cursor-pointer shrink-0 flex flex-col gap-0.5 items-center px-1"
+                                                    onClick={() => setAdsList(prev => prev.filter(a => a.id !== ad.id))}
+                                                    title="Remover"
+                                                >
+                                                    <span className="w-1 h-1 bg-current rounded-full"></span>
+                                                    <span className="w-1 h-1 bg-current rounded-full"></span>
+                                                    <span className="w-1 h-1 bg-current rounded-full"></span>
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
                             {/* Plano */}
@@ -249,7 +324,7 @@ export default function Home() {
                                         <span>Plano mensal: 80$</span>
                                     </div>
 
-                                    <div className="flex flex-col pl-2 pr-2 gap-3 pt-1">
+                                    <div className="flex flex-col pl-2 pr-2 gap-2">
                                         <div className="flex gap-4 items-center">
                                             {/* CORRIGIDO: "max-w-10" → shrink-0 com largura mínima fixa para o badge */}
                                             <div className="bg-[#E5E3FF] p-2 rounded-lg shrink-0 text-[#31303A] text-sm min-w-9 text-center">
@@ -265,14 +340,20 @@ export default function Home() {
                                             <div className="bg-[#E5E3FF] p-2 rounded-lg shrink-0 text-[#31303A] text-sm min-w-9 text-center">
                                                 3/4
                                             </div>
-                                            <span>Produtos</span>
+                                            <div className="flex flex-col">
+                                                <p>Produtos</p>
+                                                <span className="text-[12px]">Quantidade de <span className="text-[#D3CFFF]">Produtos</span> que pode conter por conta.</span>
+                                            </div>
                                         </div>
 
                                         <div className="flex gap-4 items-center">
                                             <div className="bg-[#E5E3FF] p-2 rounded-lg shrink-0 text-[#31303A] text-sm min-w-9 text-center">
                                                 0/3
                                             </div>
-                                            <span>Relatórios</span>
+                                            <div className="flex flex-col">
+                                                <p>Relatórios</p>
+                                                <span className="text-[12px]">Quantidade de <span className="text-[#D3CFFF]">Relatórios mensais</span> que pode conter por conta.</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -297,6 +378,52 @@ export default function Home() {
                     </div>
                 </div>
             </div>
+            {adModalOpen && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                    onClick={() => setAdModalOpen(false)}
+                >
+                    <div
+                        className="bg-[#31303A] rounded-2xl p-6 flex flex-col gap-4 w-80 shadow-2xl"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        {/* Input: Nomeie o ADD */}
+                        <input
+                            type="text"
+                            placeholder="Nomeie o ADD"
+                            value={adForm.nome}
+                            onChange={e => setAdForm(prev => ({ ...prev, nome: e.target.value }))}
+                            className="bg-[#E5E3FF] text-[#31303A] placeholder-[#31303A]/60 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#5E5991] text-sm font-medium"
+                        />
+
+                        {/* Input: Link do produto */}
+                        <input
+                            type="text"
+                            placeholder="Link do produto"
+                            value={adForm.link}
+                            onChange={e => setAdForm(prev => ({ ...prev, link: e.target.value }))}
+                            className="bg-[#E5E3FF] text-[#31303A] placeholder-[#31303A]/60 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#5E5991] text-sm font-medium"
+                        />
+
+                        {/* Textarea: Descrição */}
+                        <textarea
+                            placeholder="Descrição"
+                            value={adForm.descricao}
+                            onChange={e => setAdForm(prev => ({ ...prev, descricao: e.target.value }))}
+                            rows={4}
+                            className="bg-[#E5E3FF] text-[#31303A] placeholder-[#31303A]/60 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#5E5991] text-sm font-medium resize-none"
+                        />
+
+                        {/* Botão Postar ADD */}
+                        <button
+                            onClick={handlePostarAd}
+                            className="bg-[#E5E3FF] text-[#31303A] font-bold py-3 rounded-xl cursor-pointer hover:bg-[#D3CFFF] transition-colors duration-200 tracking-widest text-sm"
+                        >
+                            POSTAR ADD
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

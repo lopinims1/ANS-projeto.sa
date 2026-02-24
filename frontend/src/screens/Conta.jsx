@@ -6,8 +6,14 @@ export default function Conta() {
         // Página inteira
         <div className="bg-[#31303A] min-h-screen max-w-screen overflow-x-hidden pt-23 pl-34">
 
+            <div className='pb-4'>
+                <div className='bg-[#3C3A47] flex justify-center rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] p-3 max-w-14 cursor-pointer'>
+                    <button onClick={() => window.history.back()} className='cursor-pointer'> <img src="../public/Voltar.svg" alt="Voltar" className='w-4.5' /> </button>
+                </div>
+            </div>
+
             {/* Conteúdo principal */}
-            <div className="bg-[#3C3A47] text-[#FFFFFF] text-lg font-medium rounded-2xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] flex max-w-372 min-h-180 pl-3 pt-3 pb-3 gap-8">
+            <div className="bg-[#3C3A47] text-[#FFFFFF] text-lg font-medium rounded-2xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] flex max-w-372 min-h-160 pl-3 pt-3 pb-3 gap-8">
                 <div className="flex flex-col gap-3 pt-4">
                     <button className="bg-[#2E2D37] p-2 pr-3 pl-10 rounded-md cursor-pointer min-w-36">Minha conta</button>
 
