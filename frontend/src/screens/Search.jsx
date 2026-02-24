@@ -387,7 +387,7 @@ export default function Search() {
               </div>
               <ul className="flex flex-col px-5 gap-2 text-sm text-[#31303A] font-medium whitespace-nowrap">
                 <Link to='/conta' className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">Conta</Link>
-                <Link to='/config' className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">Configurações</Link>
+                <Link to='/conta' className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">Configurações</Link>
                 <li className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">Produtos</li>
                 <Link to='/conta' className="flex items-center gap-2 text-[#CE2424] hover:translate-x-1 transition-transform duration-200 cursor-pointer pb-2">
                   Sair
