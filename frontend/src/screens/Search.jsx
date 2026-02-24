@@ -116,8 +116,60 @@ const produtos = [
   },
 ];
 
-function ProdutoCard({ produto, onRemover }) {
-  const [salvo, setSalvo] = useState(false);
+// Dropdown customizado no estilo do site
+function CustomSelect({ label, value, onChange, options }) {
+  const [aberto, setAberto] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) setAberto(false);
+    }
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  const labelAtivo = options.find(o => o.value === value)?.label || label;
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setAberto(prev => !prev)}
+        className="flex items-center gap-2 px-4 py-1.5 rounded-sm border-2 text-xs font-medium transition-all duration-200 cursor-pointer"
+        style={{
+          borderColor: '#96DAE3',
+          background: value ? '#96DAE3' : 'transparent',
+          color: value ? '#31303A' : '#96DAE3',
+        }}
+      >
+        {labelAtivo}
+        <span style={{ fontSize: 9, opacity: 0.7 }}>▼</span>
+      </button>
+
+      {aberto && (
+        <div
+          className="absolute left-0 top-9 rounded-sm overflow-hidden"
+          style={{ minWidth: '100%', background: '#31303A', border: '2px solid #96DAE3', zIndex: 9999 }}
+        >
+          {[{ value: '', label }, ...options].map(opt => (
+            <div
+              key={opt.value}
+              onClick={() => { onChange(opt.value); setAberto(false); }}
+              className="px-4 py-2 text-xs cursor-pointer transition-all duration-150"
+              style={{ color: value === opt.value ? '#31303A' : '#96DAE3', background: value === opt.value ? '#96DAE3' : 'transparent' }}
+              onMouseEnter={e => { if (value !== opt.value) e.currentTarget.style.background = '#96DAE320'; }}
+              onMouseLeave={e => { if (value !== opt.value) e.currentTarget.style.background = 'transparent'; }}
+            >
+              {opt.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProdutoCard({ produto, onRemover, salvo, onToggleSalvo }) {
   const [voto, setVoto] = useState(null); // 'like' | 'dislike' | null
   const [menuAberto, setMenuAberto] = useState(false);
 
@@ -132,7 +184,7 @@ function ProdutoCard({ produto, onRemover }) {
         )}
         {/* Bookmark — contorno vira preenchido ao clicar */}
         <button
-          onClick={() => setSalvo(prev => !prev)}
+          onClick={onToggleSalvo}
           className="absolute top-2 right-2 bg-transparent border-none p-0 cursor-pointer transition-transform duration-200 hover:scale-110"
         >
           {salvo ? <FaBookmark className="text-[#31303A] text-lg" /> : <FaRegBookmark className="text-[#31303A] text-lg" />}
@@ -219,14 +271,12 @@ export default function Search() {
   const [query, setQuery] = useState('');
   const [busca, setBusca] = useState('');
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
-  const [filtroEmpresa, setFiltroEmpresa] = useState('');
+  const [filtroFavoritados, setFiltroFavoritados] = useState(false);
+  const [favoritados, setFavoritados] = useState([]);
   const [filtroTipo, setFiltroTipo] = useState('');
   const [filtroPrecoMin, setFiltroPrecoMin] = useState('');
   const [filtroPrecoMax, setFiltroPrecoMax] = useState('');
   const [filtroLucro, setFiltroLucro] = useState('');
-
-  // Empresas extraídas dos nomes dos produtos
-  const empresas = [...new Set(produtos.map(p => p.nome.split(' ').slice(-1)[0]))];
 
   // Mapa de tipo por produto (baseado no id para o exemplo)
   const tipoMap = {
@@ -241,6 +291,7 @@ export default function Search() {
 
   const produtosFiltrados = produtos.filter(p => {
     if (removidos.includes(p.id)) return false;
+    if (filtroFavoritados && !favoritados.includes(p.id)) return false;
     if (busca && !p.nome.toLowerCase().includes(busca.toLowerCase())) return false;
     if (filtroTipo && tipoMap[p.id] !== filtroTipo) return false;
     const preco = parsePreco(p.preco);
@@ -399,7 +450,7 @@ export default function Search() {
         </div>
 
         {/* BARRA DE PESQUISA + FILTROS */}
-        <div className="flex flex-col gap-2 shrink-0">
+        <div className="flex flex-col gap-2 shrink-0" style={{position:"relative", zIndex: 100}}>
           {/* Linha principal */}
           <div className="flex gap-4 items-center">
             <button
@@ -425,82 +476,83 @@ export default function Search() {
 
           {/* Painel de filtros */}
           <div
-            className="overflow-hidden transition-all duration-300 ease-in-out"
-            style={{ maxHeight: filtrosAbertos ? '80px' : '0', opacity: filtrosAbertos ? 1 : 0 }}
+            className="transition-all duration-300 ease-in-out"
+            style={{ maxHeight: filtrosAbertos ? '52px' : '0', opacity: filtrosAbertos ? 1 : 0, overflow: 'visible' }}
           >
-            <div className="flex gap-3 items-center pt-1 pb-1 flex-wrap">
+            <div className="flex gap-2 items-center pt-2">
 
-              {/* Empresa */}
-              <div className="flex items-center gap-1.5 border border-[#96DAE3] rounded-sm px-2 py-1">
-                <span className="text-[#96DAE3] text-xs">Empresa</span>
-                <select
-                  value={filtroEmpresa}
-                  onChange={e => setFiltroEmpresa(e.target.value)}
-                  className="bg-transparent text-[#96DAE3] text-xs outline-none cursor-pointer"
-                >
-                  <option value="" style={{background:'#31303A'}}>Todos</option>
-                  {empresas.map(e => <option key={e} value={e} style={{background:'#31303A'}}>{e}</option>)}
-                </select>
-              </div>
+              {/* Favoritados — toggle pill */}
+              <button
+                onClick={() => setFiltroFavoritados(prev => !prev)}
+                className="flex items-center gap-1.5 px-4 py-1.5 rounded-sm border-2 text-xs font-medium transition-all duration-200 cursor-pointer"
+                style={{
+                  borderColor: '#96DAE3',
+                  background: filtroFavoritados ? '#96DAE3' : 'transparent',
+                  color: filtroFavoritados ? '#31303A' : '#96DAE3',
+                }}
+              >
+                <FaBookmark size={10} />
+                Favoritados
+              </button>
 
               {/* Tipo */}
-              <div className="flex items-center gap-1.5 border border-[#96DAE3] rounded-sm px-2 py-1">
-                <span className="text-[#96DAE3] text-xs">Tipo</span>
-                <select
-                  value={filtroTipo}
-                  onChange={e => setFiltroTipo(e.target.value)}
-                  className="bg-transparent text-[#96DAE3] text-xs outline-none cursor-pointer"
-                >
-                  <option value="" style={{background:'#31303A'}}>Todos</option>
-                  <option value="Eletrônicos" style={{background:'#31303A'}}>Eletrônicos</option>
-                  <option value="Vestimentas" style={{background:'#31303A'}}>Vestimentas</option>
-                  <option value="Comidas" style={{background:'#31303A'}}>Comidas</option>
-                  <option value="Diversos" style={{background:'#31303A'}}>Diversos</option>
-                </select>
-              </div>
+              <CustomSelect
+                label="Tipo"
+                value={filtroTipo}
+                onChange={setFiltroTipo}
+                options={[
+                  { value: 'Eletrônicos', label: 'Eletrônicos' },
+                  { value: 'Vestimentas', label: 'Vestimentas' },
+                  { value: 'Comidas', label: 'Comidas' },
+                  { value: 'Diversos', label: 'Diversos' },
+                ]}
+              />
 
               {/* Preço */}
-              <div className="flex items-center gap-1.5 border border-[#96DAE3] rounded-sm px-2 py-1">
-                <span className="text-[#96DAE3] text-xs">Preço</span>
-                <span className="text-[#96DAE3] text-xs opacity-60">De</span>
+              <div
+                className="flex items-center gap-2 px-3 py-1.5 rounded-sm border-2 text-xs transition-all duration-200"
+                style={{
+                  borderColor: '#96DAE3',
+                  background: (filtroPrecoMin || filtroPrecoMax) ? '#96DAE310' : 'transparent',
+                }}
+              >
+                <span className="text-[#96DAE3] font-medium">Preço</span>
+                <span className="text-[#96DAE3] opacity-50">De</span>
                 <input
                   type="number"
-                  placeholder="R$:0"
+                  placeholder="0"
                   value={filtroPrecoMin}
                   onChange={e => setFiltroPrecoMin(e.target.value)}
-                  className="bg-transparent text-[#96DAE3] text-xs outline-none w-16 border border-[#96DAE360] rounded-sm px-1"
-                  style={{background:'#96DAE310'}}
+                  className="bg-transparent text-[#96DAE3] text-xs outline-none w-14 text-center"
+                  style={{borderBottom: '1px solid #96DAE360'}}
                 />
-                <span className="text-[#96DAE3] text-xs opacity-60">Até</span>
+                <span className="text-[#96DAE3] opacity-50">Até</span>
                 <input
                   type="number"
-                  placeholder="R$:1000"
+                  placeholder="9999"
                   value={filtroPrecoMax}
                   onChange={e => setFiltroPrecoMax(e.target.value)}
-                  className="bg-transparent text-[#96DAE3] text-xs outline-none w-20 border border-[#96DAE360] rounded-sm px-1"
-                  style={{background:'#96DAE310'}}
+                  className="bg-transparent text-[#96DAE3] text-xs outline-none w-14 text-center"
+                  style={{borderBottom: '1px solid #96DAE360'}}
                 />
               </div>
 
               {/* Lucro */}
-              <div className="flex items-center gap-1.5 border border-[#96DAE3] rounded-sm px-2 py-1">
-                <span className="text-[#96DAE3] text-xs">Lucro</span>
-                <select
-                  value={filtroLucro}
-                  onChange={e => setFiltroLucro(e.target.value)}
-                  className="bg-transparent text-[#96DAE3] text-xs outline-none cursor-pointer"
-                >
-                  <option value="" style={{background:'#31303A'}}>Todos</option>
-                  <option value="+" style={{background:'#31303A'}}>Positivo (+)</option>
-                  <option value="-" style={{background:'#31303A'}}>Negativo (−)</option>
-                </select>
-              </div>
+              <CustomSelect
+                label="Lucro"
+                value={filtroLucro}
+                onChange={setFiltroLucro}
+                options={[
+                  { value: '+', label: 'Positivo (+)' },
+                  { value: '-', label: 'Negativo (−)' },
+                ]}
+              />
 
               {/* Limpar */}
-              {(filtroEmpresa || filtroTipo || filtroPrecoMin || filtroPrecoMax || filtroLucro) && (
+              {(filtroFavoritados || filtroTipo || filtroPrecoMin || filtroPrecoMax || filtroLucro) && (
                 <button
-                  onClick={() => { setFiltroEmpresa(''); setFiltroTipo(''); setFiltroPrecoMin(''); setFiltroPrecoMax(''); setFiltroLucro(''); }}
-                  className="text-[#96DAE3] text-xs opacity-60 hover:opacity-100 transition cursor-pointer"
+                  onClick={() => { setFiltroFavoritados(false); setFiltroTipo(''); setFiltroPrecoMin(''); setFiltroPrecoMax(''); setFiltroLucro(''); }}
+                  className="px-3 py-1.5 rounded-sm border-2 border-[#96DAE360] text-[#96DAE3] text-xs opacity-50 hover:opacity-100 hover:border-[#96DAE3] transition-all duration-200 cursor-pointer"
                 >
                   Limpar
                 </button>
@@ -514,7 +566,7 @@ export default function Search() {
           <div ref={scrollRef} className="hide-scrollbar flex-1 overflow-y-auto overflow-x-hidden">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {produtosFiltrados.map((produto) => (
-                <ProdutoCard key={produto.id} produto={produto} onRemover={() => setRemovedIds(prev => [...prev, produto.id])} />
+                <ProdutoCard key={produto.id} produto={produto} onRemover={() => setRemovedIds(prev => [...prev, produto.id])} salvo={favoritados.includes(produto.id)} onToggleSalvo={() => setFavoritados(prev => prev.includes(produto.id) ? prev.filter(id => id !== produto.id) : [...prev, produto.id])} />
               ))}
             </div>
           </div>
