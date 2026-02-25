@@ -8,6 +8,7 @@ export default function Home() {
         { image: "Lupa", link: "/search", active: false },
         { image: "Home", link: "/home", active: true },
         { image: "Settings", link: "/conta", active: false },
+        { image: "Cart", link: "/cart", active: false },
     ];
 
     const [asideIconsActive, setAsideIconsActive] = useState(asideIcons);
@@ -316,7 +317,7 @@ export default function Home() {
                         </div>
 
                         {/* Card Gráfico */}
-                        <div className="bg-[#31303A] text-[#31303A] font-bold flex flex-col rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-2 pb-3 px-2 min-w-64 flex-[2]">
+                        <div className="bg-[#31303A] text-[#31303A] font-bold flex flex-col rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-2 pb-3 px-2 min-w-64 flex-2">
                             <div className="flex justify-between items-start flex-wrap gap-2">
                                 <div className="flex gap-0.5">
                                     <span className="bg-[#5E5991] cursor-pointer rounded-l-[3px] text-[#E5E3FF] px-1.5 py-0.5 text-sm">Visualizações</span>

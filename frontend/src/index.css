@@ -5,15 +5,15 @@
 
 @layer base {
 
- * {
+  * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     outline: none;
   }
- }
+}
 
- @layer utilities {
+@layer utilities {
   .sansation {
     font-family: 'Sansation', sans-serif;
   }
@@ -76,4 +76,28 @@
     transition: all 0.3s ease;
   }
 
- }
+.border-gradient {
+  position: relative;
+  border: none;
+}
+
+.border-gradient::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit; /* herda o rounded-2xl */
+  padding: 3px;
+  background: linear-gradient(to top, #96DAE3, #96dae362 , transparent);
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  z-index: -1; 
+}
+
+
+}
