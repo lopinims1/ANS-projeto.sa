@@ -262,7 +262,6 @@ export default function Search() {
   const asideIcons = [
     { image: "Lupa", link: "/search", active: true },
     { image: "Home", link: "/home", active: false },
-    { image: "Settings", link: "/conta", active: false },
     { image: "Cart", link: "/cart", active: false },
   ];
 

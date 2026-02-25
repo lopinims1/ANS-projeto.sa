@@ -7,7 +7,6 @@ export default function Home() {
     const asideIcons = [
         { image: "Lupa", link: "/search", active: false },
         { image: "Home", link: "/home", active: true },
-        { image: "Settings", link: "/conta", active: false },
         { image: "Cart", link: "/cart", active: false },
     ];
 
@@ -68,7 +67,6 @@ export default function Home() {
         };
     }, [handleScroll, updateThumb, adsList]);
 
-    // Força html/body/#root a ocuparem 100% independente do zoom
     useEffect(() => {
         const els = [document.documentElement, document.body];
         els.forEach(el => {
@@ -85,14 +83,11 @@ export default function Home() {
             root.style.overflow = 'hidden';
         }
 
-        // Bloqueia Ctrl+scroll (zoom com mouse)
         const blockScrollZoom = (e) => { if (e.ctrlKey) e.preventDefault(); };
-        // Bloqueia Ctrl++ / Ctrl+- / Ctrl+0
         const blockKeyZoom = (e) => {
             if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0'))
                 e.preventDefault();
         };
-        // Bloqueia pinch-to-zoom em touchpad
         const blockGesture = (e) => e.preventDefault();
 
         window.addEventListener('wheel', blockScrollZoom, { passive: false });
@@ -164,31 +159,197 @@ export default function Home() {
     }
 
     return (
-        /* 
-         * Usa width/height: 100% relativo ao #root que foi forçado pelo useEffect.
-         * Isso é imune ao zoom do browser, diferente de 100vw/100vh/fixed.
+        /*
+         * Root: 100% of the locked #root element.
+         * position:relative anchors ALL absolute children (sidebar, dropdown).
+         * overflow:hidden is the hard stop — nothing leaks outside this box.
          */
         <div
             onClick={() => setAdMenuOpen(null)}
-            style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', background: '#31303A', position: 'relative' }}
+            style={{
+                width: '100%',
+                height: '100%',
+                overflow: 'hidden',
+                display: 'flex',
+                background: '#31303A',
+                position: 'relative',
+            }}
         >
             <style>{`
+                /* ── scrollbar helpers ── */
                 .hide-scrollbar::-webkit-scrollbar { display: none; }
                 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+                /* ── custom scrollbar thumb ── */
                 .thumb-custom { transition: background 0.3s ease; cursor: grab; }
                 .thumb-custom:active { cursor: grabbing; }
                 .thumb-custom:hover { background: #96DAE3 !important; }
+
+                /* ── period selector buttons ── */
+                .period-btn {
+                    background: #E5E3FF;
+                    color: #31303A;
+                    cursor: pointer;
+                    padding: 2px 6px;
+                    font-size: 0.75rem;
+                    line-height: 1.25rem;
+                    white-space: nowrap;
+                    user-select: none;
+                }
+                .period-btn:first-child { border-radius: 3px 0 0 3px; }
+                .period-btn:last-child  { border-radius: 0 3px 3px 0; }
+                .period-btn.active      { background: #5E5991; color: #E5E3FF; }
+
+                /* ── metric tab buttons ── */
+                .metric-btn {
+                    background: #E5E3FF;
+                    color: #31303A;
+                    cursor: pointer;
+                    padding: 2px 6px;
+                    font-size: 0.75rem;
+                    line-height: 1.25rem;
+                    white-space: nowrap;
+                    user-select: none;
+                }
+                .metric-btn:first-child { border-radius: 3px 0 0 3px; }
+                .metric-btn:last-child  { border-radius: 0 3px 3px 0; }
+                .metric-btn.active      { background: #5E5991; color: #E5E3FF; }
+
+                /*
+                 * ── Main scrollable column ──
+                 * flex:1 + min-width:0 → takes remaining space without overflowing.
+                 * overflow-y:auto      → vertical scroll when content is taller than viewport.
+                 * overflow-x:hidden    → no horizontal scroll / leakage.
+                 * padding-left:84px    → clears the 64px sidebar + breathing room.
+                 * box-sizing:border-box → padding counted inside the element width.
+                 */
+                .main-scroll-area {
+                    flex: 1;
+                    min-width: 0;
+                    height: 100%;
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    padding: 8px 16px 16px 84px;
+                    box-sizing: border-box;
+                }
+                .main-scroll-area::-webkit-scrollbar { display: none; }
+                .main-scroll-area { -ms-overflow-style: none; scrollbar-width: none; }
+
+                /* ── top cards row ── */
+                .top-section {
+                    display: flex;
+                    gap: 14px;
+                    width: 100%;
+                    flex-wrap: wrap;
+                    align-items: stretch;
+                }
+
+                /* financial cards */
+                .finance-card {
+                    background: #31303A;
+                    color: #E5E3FF;
+                    font-weight: 700;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    border-radius: 8px;
+                    box-shadow: 4px 9px 20px rgba(0,0,0,0.30);
+                    padding: 12px 8px 12px 20px;
+                    flex: 1 1 180px;
+                    min-width: 0;
+                    box-sizing: border-box;
+                }
+
+                /* graph card — takes remaining width */
+                .graph-card {
+                    background: #31303A;
+                    display: flex;
+                    flex-direction: column;
+                    border-radius: 8px;
+                    box-shadow: 4px 9px 20px rgba(0,0,0,0.30);
+                    padding: 8px 8px 12px;
+                    flex: 2 1 200px;
+                    min-width: 0;
+                    box-sizing: border-box;
+                }
+
+                /* ── bottom section ── */
+                .bottom-section {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 14px;
+                    width: 100%;
+                    align-items: flex-start;
+                }
+
+                /* Google Ads panel */
+                .google-ads-card {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    flex: 1 1 240px;
+                    min-width: 0;
+                    max-width: 420px;
+                    box-sizing: border-box;
+                }
+
+                /* plan card */
+                .plan-card {
+                    background: #31303A;
+                    color: #FFFFFF;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    font-weight: 500;
+                    border-radius: 12px;
+                    box-shadow: 4px 9px 20px rgba(0,0,0,0.30);
+                    overflow: hidden;
+                    flex: 0 1 220px;
+                    min-width: 0;
+                    box-sizing: border-box;
+                }
+
+                /* store photo card */
+                .store-photo-card {
+                    background: #9997B1;
+                    display: flex;
+                    flex-direction: column;
+                    border-radius: 12px;
+                    box-shadow: 4px 9px 20px rgba(0,0,0,0.30);
+                    overflow: hidden;
+                    width: 176px;
+                    height: 192px;
+                    flex-shrink: 0;
+                    margin-left: auto;   /* push to right on wide screens */
+                    align-self: flex-end;
+                }
+
+                /* ── responsive ── */
+                @media (max-width: 860px) {
+                    .google-ads-card  { max-width: 100%; }
+                    .store-photo-card { margin-left: 0; align-self: auto; }
+                }
+                @media (max-width: 540px) {
+                    .main-scroll-area { padding-left: 72px; padding-right: 8px; }
+                    .finance-card,
+                    .graph-card       { flex: 1 1 100%; }
+                    .plan-card        { flex: 1 1 100%; max-width: 100%; }
+                    .store-photo-card { width: 100%; height: auto; }
+                }
             `}</style>
 
-            {/* Nav lateral — absolute dentro do root 100%, sempre centralizada */}
+            {/* ── Lateral sidebar ─────────────────────────────────────────────────
+                absolute, vertically centred, z-50 so it floats above content.    */}
             <div
                 style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 50 }}
                 className="bg-[#96DAE3] flex flex-col items-center justify-center gap-7 py-6 w-16 rounded-r-2xl"
             >
                 {asideIconsActive.map((item, index) => (
-                    <Link key={index} to={item.link} onClick={() => {
-                        setAsideIconsActive(prev => prev.map((el, i) => ({ ...el, active: i === index })))
-                    }}>
+                    <Link
+                        key={index}
+                        to={item.link}
+                        onClick={() => setAsideIconsActive(prev => prev.map((el, i) => ({ ...el, active: i === index })))}
+                    >
                         <img
                             src={`../../public/${item.image}.svg`}
                             alt={item.image}
@@ -198,42 +359,77 @@ export default function Home() {
                 ))}
             </div>
 
-            {/* Setinha dropdown — absolute no canto superior direito */}
+            {/* ── Top-right dropdown ───────────────────────────────────────────────
+                position:absolute top:0 right:0 inside the root div.
+                The collapsed <button> and the expanded <div> both live here so
+                the panel fans out downward from the exact same anchor point.      */}
             <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 50 }}>
-                <div className="relative">
-                    <button
-                        onClick={handleClick}
-                        className={`bg-[#96DAE3] rounded-b-lg w-10 h-5 flex items-center justify-center cursor-pointer transition-all duration-300 ${containerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-                    >
-                        <img src="https://img.icons8.com/?size=100&id=4GrGB5l93HFc&format=png&color=31303A" className="w-4 h-4" alt="Dropdown" />
-                    </button>
-                    <div className={`absolute right-0 top-0 bg-[#96DAE3] rounded-b-xl transition-all duration-300 ease-in-out overflow-hidden ${containerOpen ? 'max-h-60 opacity-100 shadow-lg' : 'max-h-0 opacity-0'}`}>
-                        <div className="flex justify-end px-3 pt-2 pb-2">
-                            <button onClick={handleClick} className="text-[#31303A] cursor-pointer">
-                                <img src="https://img.icons8.com/?size=100&id=39787&format=png&color=000000" className="w-4 h-4" alt="Fechar" />
-                            </button>
-                        </div>
-                        <ul className="flex flex-col px-5 gap-2 text-sm text-[#31303A] font-medium whitespace-nowrap">
-                            <Link to='/conta' onClick={e => e.stopPropagation()} className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">Conta</Link>
-                            <Link to='/conta' onClick={e => e.stopPropagation()} className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">Configurações</Link>
-                            <li className="hover:translate-x-1 font-bold transition-transform duration-200 cursor-pointer">Produtos</li>
-                            <Link to='/conta' onClick={e => e.stopPropagation()} className="flex items-center gap-2 text-[#CE2424] hover:translate-x-1 transition-transform duration-200 cursor-pointer pb-2">
-                                Sair
-                                <img src="https://img.icons8.com/?size=100&id=vZasO3UTBpQE&format=png&color=CE2424" className="w-4" alt="Sair" />
-                            </Link>
-                        </ul>
+                {/* collapsed trigger pill */}
+                <button
+                    onClick={handleClick}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '40px',
+                        height: '20px',
+                        background: '#96DAE3',
+                        borderRadius: '0 0 8px 8px',
+                        cursor: 'pointer',
+                        border: 'none',
+                        transition: 'opacity 0.3s',
+                        opacity: containerOpen ? 0 : 1,
+                        pointerEvents: containerOpen ? 'none' : 'auto',
+                    }}
+                >
+                    <img
+                        src="https://img.icons8.com/?size=100&id=4GrGB5l93HFc&format=png&color=31303A"
+                        style={{ width: '16px', height: '16px' }}
+                        alt="Dropdown"
+                    />
+                </button>
+
+                {/* expanded panel — absolutely stacked on top of the trigger */}
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                        background: '#96DAE3',
+                        borderRadius: '0 0 12px 12px',
+                        overflow: 'hidden',
+                        maxHeight: containerOpen ? '240px' : '0px',
+                        opacity: containerOpen ? 1 : 0,
+                        transition: 'max-height 0.3s ease, opacity 0.3s ease',
+                        boxShadow: containerOpen ? '0 4px 24px rgba(0,0,0,0.2)' : 'none',
+                    }}
+                >
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '8px 12px' }}>
+                        <button onClick={handleClick} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#31303A' }}>
+                            <img
+                                src="https://img.icons8.com/?size=100&id=39787&format=png&color=000000"
+                                style={{ width: '16px', height: '16px' }}
+                                alt="Fechar"
+                            />
+                        </button>
                     </div>
+                    <ul style={{ display: 'flex', flexDirection: 'column', padding: '0 20px 8px', gap: '8px', fontSize: '14px', color: '#31303A', fontWeight: 500, whiteSpace: 'nowrap', listStyle: 'none', margin: 0 }}>
+                        <Link to='/conta' onClick={e => e.stopPropagation()} className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">Conta</Link>
+                        <Link to='/conta' onClick={e => e.stopPropagation()} className="hover:translate-x-1 transition-transform duration-200 cursor-pointer">Configurações</Link>
+                        <Link to='/conta' onClick={e => e.stopPropagation()} className="flex items-center gap-2 text-[#CE2424] hover:translate-x-1 transition-transform duration-200 cursor-pointer pb-2">
+                            Sair
+                            <img src="https://img.icons8.com/?size=100&id=vZasO3UTBpQE&format=png&color=CE2424" className="w-4" alt="Sair" />
+                        </Link>
+                    </ul>
                 </div>
             </div>
 
-            {/* Conteúdo principal */}
-            <div
-                className="flex flex-col max-h-240 gap-4 overflow-y-auto overflow-x-hidden hide-scrollbar"
-                style={{ flex: 1, paddingLeft: '84px', paddingRight: '16px', paddingBottom: '16px', paddingTop: '8px', height: '100%', minWidth: 0 }}
-            >
+            {/* ── Main scrollable content ──────────────────────────────────────── */}
+            <div className="main-scroll-area">
+
                 <div style={{ height: '8px', flexShrink: 0 }} />
 
-                {/* Barra de mercados */}
+                {/* Marketplace filter bar */}
                 <div className="flex items-center gap-6 text-[#D7D7D7] overflow-x-auto hide-scrollbar pb-1 pl-10" style={{ flexShrink: 0 }}>
                     <label className="text-[#96DAE3] flex items-center gap-2 cursor-pointer shrink-0">
                         <input type="checkbox" className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3] checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
@@ -251,26 +447,27 @@ export default function Home() {
                         <input type="checkbox" className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3] checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
                         <span>Amazon</span>
                     </label>
-
-                    
                     <button className="flex justify-center items-center font-medium border-2 border-[#D7D7D7] rounded-sm w-7 h-7 cursor-pointer outline-none text-[#D7D7D7] shrink-0">
                         <span className="text-xl leading-none mb-1">+</span>
                     </button>
                 </div>
 
-                {/* Container cinza principal */}
-                <div className="flex flex-col bg-[#49475B] w-full rounded-xl p-3.5 gap-18" style={{ flex: 1 }}>
+                {/* ── Main grey container ── */}
+                <div
+                    className="bg-[#49475B] w-full rounded-xl p-3.5 mt-4"
+                    style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}
+                >
 
-                    {/* Section top */}
-                    <div className="flex gap-5 min-h-85 w-full flex-wrap lg:flex-nowra">
+                    {/* Top section */}
+                    <div className="top-section">
 
                         {/* Card Bruto */}
-                        <div className="bg-[#31303A] text-[#E5E3FF] font-bold flex flex-col gap-6 rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 px-2 pb-3 pl-5 max-w-82 flex-1">
-                            <div className="flex text-[#31303A] gap-0.5 flex-wrap">
-                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-l-[3px] text-sm">1 Dia</span>
-                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 text-sm">3 Dias</span>
-                                <span className="bg-[#5E5991] cursor-pointer text-[#E5E3FF] p-0.5 text-sm">2 Semanas</span>
-                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-r-[3px] text-sm">1 Mês</span>
+                        <div className="finance-card">
+                            <div className="flex gap-0.5 flex-wrap">
+                                <span className="period-btn">1 Dia</span>
+                                <span className="period-btn">3 Dias</span>
+                                <span className="period-btn active">2 Semanas</span>
+                                <span className="period-btn">1 Mês</span>
                             </div>
                             <div className="flex flex-col gap-3">
                                 <div className="flex gap-4 items-center">
@@ -293,12 +490,12 @@ export default function Home() {
                         </div>
 
                         {/* Card Líquido */}
-                        <div className="bg-[#31303A] text-[#E5E3FF] font-bold flex flex-col gap-6 rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-3 px-2 pb-3 pl-5 max-w-82 flex-1">
-                            <div className="flex text-[#31303A] gap-0.5 flex-wrap">
-                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-l-[3px] text-sm">1 Dia</span>
-                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 text-sm">3 Dias</span>
-                                <span className="bg-[#5E5991] cursor-pointer text-[#E5E3FF] p-0.5 text-sm">2 Semanas</span>
-                                <span className="bg-[#E5E3FF] cursor-pointer p-0.5 rounded-r-[3px] text-sm">1 Mês</span>
+                        <div className="finance-card">
+                            <div className="flex gap-0.5 flex-wrap">
+                                <span className="period-btn">1 Dia</span>
+                                <span className="period-btn">3 Dias</span>
+                                <span className="period-btn active">2 Semanas</span>
+                                <span className="period-btn">1 Mês</span>
                             </div>
                             <div className="flex flex-col gap-3">
                                 <div className="flex gap-4 items-center">
@@ -317,44 +514,48 @@ export default function Home() {
                         </div>
 
                         {/* Card Gráfico */}
-                        <div className="bg-[#31303A] text-[#31303A] font-bold flex flex-col rounded-lg shadow-[4px_9px_20px_rgba(0,0,0,0.30)] pt-2 pb-3 px-2 min-w-64 flex-2">
+                        <div className="graph-card">
                             <div className="flex justify-between items-start flex-wrap gap-2">
-                                <div className="flex gap-0.5">
-                                    <span className="bg-[#5E5991] cursor-pointer rounded-l-[3px] text-[#E5E3FF] px-1.5 py-0.5 text-sm">Visualizações</span>
-                                    <span className="bg-[#E5E3FF] cursor-pointer px-1.5 py-0.5 text-sm">Cliques</span>
-                                    <span className="bg-[#E5E3FF] cursor-pointer rounded-r-[3px] px-1.5 py-0.5 text-sm">Compras</span>
+                                <div className="flex gap-0.5 flex-wrap">
+                                    <span className="metric-btn active">Visualizações</span>
+                                    <span className="metric-btn">Cliques</span>
+                                    <span className="metric-btn">Compras</span>
                                 </div>
-                                <div className="flex gap-0.5">
-                                    <span className="bg-[#E5E3FF] cursor-pointer rounded-l-[3px] px-1.5 py-0.5 text-sm">1Dia</span>
-                                    <span className="bg-[#E5E3FF] cursor-pointer px-1.5 py-0.5 text-sm">5Dias</span>
-                                    <span className="bg-[#E5E3FF] cursor-pointer px-1.5 py-0.5 text-sm">2Semanas</span>
-                                    <span className="bg-[#5E5991] cursor-pointer rounded-r-[3px] text-[#E5E3FF] px-1.5 py-0.5 text-sm">1Mês</span>
+                                <div className="flex gap-0.5 flex-wrap">
+                                    <span className="period-btn">1Dia</span>
+                                    <span className="period-btn">5Dias</span>
+                                    <span className="period-btn">2Semanas</span>
+                                    <span className="period-btn active">1Mês</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Section bottom */}
-                    <div className="flex flex-wrap gap-5 h-full w-full items-start">
+                    {/* Bottom section */}
+                    <div className="bottom-section">
 
                         {/* GoogleAds */}
-                        <div className="flex flex-col gap-2 shrink-0 min-w-110 sm:w-72">
+                        <div className="google-ads-card">
                             {!googleConnected ? (
-                                <div className="bg-[url('../../public/GoogleAds.svg')] bg-no-repeat bg-cover flex flex-col-reverse rounded-xl overflow-hidden" style={{ minHeight: "417px" }}>
-                                    <button onClick={() => setConnectModalOpen(true)} className="bg-[#2C2399] text-[#E5E3FF] p-4 font-medium cursor-pointer outline-none w-full hover:bg-[#3d30cc] transition-colors">
+                                <div
+                                    className="bg-[url('../../public/GoogleAds.svg')] bg-no-repeat bg-cover flex flex-col-reverse rounded-xl overflow-hidden"
+                                    style={{ minHeight: '417px' }}
+                                >
+                                    <button
+                                        onClick={() => setConnectModalOpen(true)}
+                                        className="bg-[#2C2399] text-[#E5E3FF] p-4 font-medium cursor-pointer outline-none w-full hover:bg-[#3d30cc] transition-colors"
+                                    >
                                         Conectar GoogleAds
                                     </button>
                                 </div>
                             ) : (
-                                <div className="bg-[#31303A] rounded-xl p-2 flex flex-col gap-2" style={{ minHeight: "417px" }}>
-                                    {/* Wrapper com maxHeight — scrollbar FORA do scrollRef */}
-                                    <div className="flex gap-1" style={{ maxHeight: adsList.length >= 5 ? "325px" : "none" }}>
-                                        {/* Apenas os cards scrollam */}
+                                <div className="bg-[#31303A] rounded-xl p-2 flex flex-col gap-2" style={{ minHeight: '417px' }}>
+                                    <div className="flex gap-1" style={{ maxHeight: adsList.length >= 5 ? '325px' : 'none' }}>
                                         <div
                                             ref={scrollRef}
                                             onScroll={handleScroll}
                                             className="flex flex-col gap-2 flex-1 hide-scrollbar"
-                                            style={{ overflowY: adsList.length >= 3 ? "auto" : "visible" }}
+                                            style={{ overflowY: adsList.length >= 3 ? 'auto' : 'visible' }}
                                         >
                                             {adsList.map((ad) => (
                                                 <div key={ad.id} className="bg-[#E5E3FF] rounded-xl flex items-center gap-3 px-3 py-2 shadow-md shrink-0">
@@ -394,31 +595,56 @@ export default function Home() {
                                                 </div>
                                             ))}
                                             {adsList.length < 3 && (
-                                                <button onClick={() => setAdModalOpen(true)} className="bg-[#96DAE3] hover:bg-[#7ecdd6] transition-colors rounded-xl h-12 flex items-center justify-center text-[#31303A] text-2xl font-bold cursor-pointer w-full shrink-0">+</button>
+                                                <button
+                                                    onClick={() => setAdModalOpen(true)}
+                                                    className="bg-[#96DAE3] hover:bg-[#7ecdd6] transition-colors rounded-xl h-12 flex items-center justify-center text-[#31303A] text-2xl font-bold cursor-pointer w-full shrink-0"
+                                                >+</button>
                                             )}
                                         </div>
-                                        {/* Scrollbar FORA do scrollRef — não some ao rolar */}
                                         {adsList.length >= 3 && (
-                                            <div className="flex flex-col items-center gap-2 py-1 shrink-0" style={{ width: "20px" }}>
-                                                <div ref={trackRef} onClick={onTrackClick} style={{ flex: 1, width: "2px", background: "#ffffff18", borderRadius: "2px", position: "relative", cursor: "pointer" }}>
-                                                    <div ref={thumbRef} onMouseDown={onMouseDown} className="thumb-custom"
-                                                        style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", top: `${thumbStyle.top}px`, height: `${thumbStyle.height}px`, width: "3px", background: isScrolling ? "#96DAE3" : "#96DAE380", borderRadius: "3px", userSelect: "none" }} />
+                                            <div className="flex flex-col items-center gap-2 py-1 shrink-0" style={{ width: '20px' }}>
+                                                <div
+                                                    ref={trackRef}
+                                                    onClick={onTrackClick}
+                                                    style={{ flex: 1, width: '2px', background: '#ffffff18', borderRadius: '2px', position: 'relative', cursor: 'pointer' }}
+                                                >
+                                                    <div
+                                                        ref={thumbRef}
+                                                        onMouseDown={onMouseDown}
+                                                        className="thumb-custom"
+                                                        style={{
+                                                            position: 'absolute',
+                                                            left: '50%',
+                                                            transform: 'translateX(-50%)',
+                                                            top: `${thumbStyle.top}px`,
+                                                            height: `${thumbStyle.height}px`,
+                                                            width: '3px',
+                                                            background: isScrolling ? '#96DAE3' : '#96DAE380',
+                                                            borderRadius: '3px',
+                                                            userSelect: 'none',
+                                                        }}
+                                                    />
                                                 </div>
-                                                <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: progress >= 99 ? "#96DAE3" : "#ffffff20", transition: "background 0.4s ease", flexShrink: 0 }} />
+                                                <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: progress >= 99 ? '#96DAE3' : '#ffffff20', transition: 'background 0.4s ease', flexShrink: 0 }} />
                                             </div>
                                         )}
                                     </div>
                                     {adsList.length >= 3 && (
-                                        <button onClick={() => setAdModalOpen(true)} className="bg-[#96DAE3] hover:bg-[#7ecdd6] transition-colors rounded-xl h-12 flex items-center justify-center text-[#31303A] text-2xl font-bold cursor-pointer w-full shrink-0 mt-auto">+</button>
+                                        <button
+                                            onClick={() => setAdModalOpen(true)}
+                                            className="bg-[#96DAE3] hover:bg-[#7ecdd6] transition-colors rounded-xl h-12 flex items-center justify-center text-[#31303A] text-2xl font-bold cursor-pointer w-full shrink-0 mt-auto"
+                                        >+</button>
                                     )}
                                 </div>
                             )}
                         </div>
 
                         {/* Plano */}
-                        <div className="bg-[#31303A] text-[#FFFFFF] h-full flex flex-col justify-between font-medium rounded-xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] shrink-0 overflow-hidden min-w-70 sm:w-56">
+                        <div className="plan-card">
                             <div className="flex flex-col gap-2">
-                                <div className="bg-[#E5E3FF] text-[#31303A] text-center p-2 font-semibold"><span>Plano mensal: 80$</span></div>
+                                <div className="bg-[#E5E3FF] text-[#31303A] text-center p-2 font-semibold">
+                                    <span>Plano mensal: 80$</span>
+                                </div>
                                 <div className="flex flex-col pl-2 pr-2 gap-2">
                                     <div className="flex gap-4 items-center">
                                         <div className="bg-[#E5E3FF] p-2 rounded-lg shrink-0 text-[#31303A] text-sm min-w-9 text-center">a</div>
@@ -438,64 +664,122 @@ export default function Home() {
                         </div>
 
                         {/* Foto loja */}
-                        <div className="flex items-end shrink-0 ml-auto mt-55">
-                            <div className="bg-[#9997B1] flex flex-col rounded-xl shadow-[4px_9px_20px_rgba(0,0,0,0.30)] overflow-hidden w-44 h-48">
-                                <div className="flex-1 flex items-center justify-center"><p className="text-[#000000]">Foto loja</p></div>
-                                <button className="bg-[#5E5991] text-[#FFFFFF] font-medium p-3 cursor-pointer outline-none w-full">Acessar loja</button>
+                        <div className="store-photo-card">
+                            <div className="flex-1 flex items-center justify-center">
+                                <p className="text-[#000000]">Foto loja</p>
                             </div>
+                            <button className="bg-[#5E5991] text-[#FFFFFF] font-medium p-3 cursor-pointer outline-none w-full">Acessar loja</button>
                         </div>
                     </div>
                 </div>
+
+                <div style={{ height: '16px', flexShrink: 0 }} />
             </div>
 
-            {/* Menu 3 pontos */}
+            {/* ── 3-dot context menu ─────────────────────────────────────────────── */}
             {adMenuOpen !== null && (
-                <div className="fixed z-[100] bg-[#31303A] rounded-xl shadow-2xl overflow-hidden border border-[#ffffff15]"
-                    style={{ top: menuPos.top, left: menuPos.left, minWidth: "130px" }}
-                    onClick={e => e.stopPropagation()}>
-                    <button onClick={() => { const ad = adsList.find(a => a.id === adMenuOpen); setAdForm({ nome: ad.nome, link: ad.link, descricao: ad.descricao }); setAdModalOpen(adMenuOpen); setAdMenuOpen(null); }}
-                        className="flex items-center gap-3 px-4 py-2.5 w-full text-[#E5E3FF] hover:bg-[#49475B] transition-colors cursor-pointer text-sm whitespace-nowrap">
+                <div
+                    className="fixed z-[100] bg-[#31303A] rounded-xl shadow-2xl overflow-hidden border border-[#ffffff15]"
+                    style={{ top: menuPos.top, left: menuPos.left, minWidth: '130px' }}
+                    onClick={e => e.stopPropagation()}
+                >
+                    <button
+                        onClick={() => {
+                            const ad = adsList.find(a => a.id === adMenuOpen);
+                            setAdForm({ nome: ad.nome, link: ad.link, descricao: ad.descricao });
+                            setAdModalOpen(adMenuOpen);
+                            setAdMenuOpen(null);
+                        }}
+                        className="flex items-center gap-3 px-4 py-2.5 w-full text-[#E5E3FF] hover:bg-[#49475B] transition-colors cursor-pointer text-sm whitespace-nowrap"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                         Editar
                     </button>
                     <div className="h-px bg-[#ffffff15] mx-2" />
-                    <button onClick={() => { setAdsList(prev => prev.filter(a => a.id !== adMenuOpen)); setAdMenuOpen(null); }}
-                        className="flex items-center gap-3 px-4 py-2.5 w-full text-[#CE2424] hover:bg-[#49475B] transition-colors cursor-pointer text-sm whitespace-nowrap">
+                    <button
+                        onClick={() => { setAdsList(prev => prev.filter(a => a.id !== adMenuOpen)); setAdMenuOpen(null); }}
+                        className="flex items-center gap-3 px-4 py-2.5 w-full text-[#CE2424] hover:bg-[#49475B] transition-colors cursor-pointer text-sm whitespace-nowrap"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                         Excluir
                     </button>
                     <div className="h-px bg-[#ffffff15] mx-2" />
-                    <button onClick={() => setAdMenuOpen(null)}
-                        className="flex items-center gap-3 px-4 py-2.5 w-full text-[#D7D7D7] hover:bg-[#49475B] transition-colors cursor-pointer text-sm whitespace-nowrap">
+                    <button
+                        onClick={() => setAdMenuOpen(null)}
+                        className="flex items-center gap-3 px-4 py-2.5 w-full text-[#D7D7D7] hover:bg-[#49475B] transition-colors cursor-pointer text-sm whitespace-nowrap"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                         Voltar
                     </button>
                 </div>
             )}
 
-            {/* Modal: Conectar Google Ads */}
+            {/* ── Modal: Conectar Google Ads ──────────────────────────────────────── */}
             {connectModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setConnectModalOpen(false)}>
-                    <div className="bg-[#31303A] rounded-2xl p-6 flex flex-col gap-5 w-80 shadow-2xl items-center" onClick={e => e.stopPropagation()}>
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                    onClick={() => setConnectModalOpen(false)}
+                >
+                    <div
+                        className="bg-[#31303A] rounded-2xl p-6 flex flex-col gap-5 w-80 shadow-2xl items-center"
+                        onClick={e => e.stopPropagation()}
+                    >
                         <img src="../../public/GoogleAds.svg" alt="Google Ads" className="w-24 rounded-xl" />
                         <div className="text-center">
                             <h2 className="text-[#E5E3FF] font-bold text-lg">Conectar Google Ads</h2>
                             <p className="text-[#D7D7D7] text-sm mt-1">Vincule sua conta do Google Ads para gerenciar seus anúncios diretamente aqui.</p>
                         </div>
-                        <button onClick={() => { setGoogleConnected(true); setConnectModalOpen(false); }} className="bg-[#2C2399] text-[#E5E3FF] font-bold py-3 px-6 rounded-xl cursor-pointer hover:bg-[#3d30cc] transition-colors w-full text-sm">Entrar com Google</button>
-                        <button onClick={() => setConnectModalOpen(false)} className="text-[#D7D7D7] text-sm cursor-pointer hover:text-white transition-colors">Cancelar</button>
+                        <button
+                            onClick={() => { setGoogleConnected(true); setConnectModalOpen(false); }}
+                            className="bg-[#2C2399] text-[#E5E3FF] font-bold py-3 px-6 rounded-xl cursor-pointer hover:bg-[#3d30cc] transition-colors w-full text-sm"
+                        >
+                            Entrar com Google
+                        </button>
+                        <button
+                            onClick={() => setConnectModalOpen(false)}
+                            className="text-[#D7D7D7] text-sm cursor-pointer hover:text-white transition-colors"
+                        >
+                            Cancelar
+                        </button>
                     </div>
                 </div>
             )}
 
-            {/* Modal: Postar / Editar AD */}
+            {/* ── Modal: Postar / Editar AD ───────────────────────────────────────── */}
             {adModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => { setAdModalOpen(false); setAdForm({ nome: '', link: '', descricao: '' }); }}>
-                    <div className="bg-[#31303A] rounded-2xl p-6 flex flex-col gap-4 w-80 shadow-2xl" onClick={e => e.stopPropagation()}>
-                        <input type="text" placeholder="Nomeie o ADD" value={adForm.nome} onChange={e => setAdForm(prev => ({ ...prev, nome: e.target.value }))} className="bg-[#E5E3FF] text-[#31303A] placeholder-[#31303A]/60 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#5E5991] text-sm font-medium" />
-                        <input type="text" placeholder="Link do produto" value={adForm.link} onChange={e => setAdForm(prev => ({ ...prev, link: e.target.value }))} className="bg-[#E5E3FF] text-[#31303A] placeholder-[#31303A]/60 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#5E5991] text-sm font-medium" />
-                        <textarea placeholder="Descrição" value={adForm.descricao} rows={4} onChange={e => setAdForm(prev => ({ ...prev, descricao: e.target.value }))} className="bg-[#E5E3FF] text-[#31303A] placeholder-[#31303A]/60 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#5E5991] text-sm font-medium resize-none" />
-                        <button onClick={handlePostarAd} className="bg-[#E5E3FF] text-[#31303A] font-bold py-3 rounded-xl cursor-pointer hover:bg-[#D3CFFF] transition-colors tracking-widest text-sm">
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+                    onClick={() => { setAdModalOpen(false); setAdForm({ nome: '', link: '', descricao: '' }); }}
+                >
+                    <div
+                        className="bg-[#31303A] rounded-2xl p-6 flex flex-col gap-4 w-80 shadow-2xl"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <input
+                            type="text"
+                            placeholder="Nomeie o ADD"
+                            value={adForm.nome}
+                            onChange={e => setAdForm(prev => ({ ...prev, nome: e.target.value }))}
+                            className="bg-[#E5E3FF] text-[#31303A] placeholder-[#31303A]/60 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#5E5991] text-sm font-medium"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Link do produto"
+                            value={adForm.link}
+                            onChange={e => setAdForm(prev => ({ ...prev, link: e.target.value }))}
+                            className="bg-[#E5E3FF] text-[#31303A] placeholder-[#31303A]/60 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#5E5991] text-sm font-medium"
+                        />
+                        <textarea
+                            placeholder="Descrição"
+                            value={adForm.descricao}
+                            rows={4}
+                            onChange={e => setAdForm(prev => ({ ...prev, descricao: e.target.value }))}
+                            className="bg-[#E5E3FF] text-[#31303A] placeholder-[#31303A]/60 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-[#5E5991] text-sm font-medium resize-none"
+                        />
+                        <button
+                            onClick={handlePostarAd}
+                            className="bg-[#E5E3FF] text-[#31303A] font-bold py-3 rounded-xl cursor-pointer hover:bg-[#D3CFFF] transition-colors tracking-widest text-sm"
+                        >
                             {typeof adModalOpen === 'number' ? 'SALVAR EDIÇÃO' : 'POSTAR ADD'}
                         </button>
                     </div>
