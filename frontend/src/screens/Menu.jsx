@@ -35,9 +35,9 @@ export default function Menu() {
     const OsIcons = { WinIcon, LinuxIcon, MacIcon };
 
     const installOs = [
-        { title: "Windows", image: "WinIcon" },
-        { title: "Linux", image: "LinuxIcon" },
-        { title: "Mac", image: "MacIcon" },
+        { title: "Windows", image: "WinIcon", link: "/*" },
+        { title: "Linux", image: "LinuxIcon" , link: "/*" },
+        { title: "Mac", image: "MacIcon", link: "/*" },
     ];
 
     const planIcons = { Purse, List, Models, Alert, Foguinho };
@@ -138,6 +138,7 @@ export default function Menu() {
                 </div>
             </header>
 
+
             <main id='mainBody' className="bg-[#96DAE3] text-[#31303A] flex items-center justify-center px-10 py-10">
 
                 <div className='flex items-center justify-between w-full max-w-7xl'>
@@ -150,10 +151,12 @@ export default function Menu() {
                             <p>Nosso objetivo é simplificar processos, reduzir riscos e tornar o dropshipping e a revenda online mais acessíveis, eficientes e estratégicos para qualquer pessoa que deseja empreender no e-commerce.</p>
                         </div>
                     </div>
-                    <div className='flex items-center mt-100 gap-5'>
+                    <div className='flex items-center mt-100 mr-5 gap-5'>
                         {installOs.map(os => (
-                            <button id='OsInstallBtn' key={os.image} className='bg-[#3B3A48] rounded-md p-2 w-15 h-15 flex items-center justify-center cursor-pointer shadow-lg shadow-'>
-                                <img src={OsIcons[os.image]} alt={os.title} className='w-full h-full object-contain' />
+                            <button id='OsInstallBtn' key={os.image} className='bg-[#3B3A48] btn-hover rounded-md p-2 w-15 h-15 flex items-center justify-center cursor-pointer shadow-lg shadow-[#3b3a4846]'>
+                                <a href={os.link}>
+                                    <img src={OsIcons[os.image]} alt={os.title} className='w-full h-full object-contain' />
+                                </a>
                             </button>
                         ))}
                     </div>
@@ -163,21 +166,17 @@ export default function Menu() {
             <img className='w-full' src="./bottomMain.svg" />
 
 
-            <section className='flex justify-center w-full py-10 h-130 text-white'>
+            <section className='flex justify-center w-full py-10 h-100 text-white'>
                 <div className='flex justify-between w-full max-w-7xl'>
 
                     <div className='w-full max-w-2xl flex flex-col gap-5 text-lg font-normal'>
                         <p>A ANS Automatic National Shipping é uma plataforma que identifica oportunidades reais de revenda e dropshipping por meio de automação e análise de mercado. O sistema cruza dados de preços, demanda e viabilidade comercial para encontrar produtos com alto potencial de lucro e competitividade no mercado nacional.  </p>
                         <p>Em vez de tentativas aleatórias, a ANS entrega decisões baseadas em dados. A plataforma organiza informações estratégicas, reduz riscos operacionais e otimiza o tempo de quem busca estruturar um negócio de revenda online de forma profissional, escalável e sustentável.</p>
                     </div>
-
-                    <div className='max-w-200'>
-                        <img src="../public/MenuPhoto.png" alt="" className='w-full' />
-                    </div>
                 </div>
             </section>
 
-            <section id='plans' className='flex justify-center w-full  py-10 text-white'>
+            <section id='plans' className='flex justify-center w-full py-10 text-white'>
                 <div className='flex items-center justify-center gap-2 w-full max-w-7xl'>
                     {infoPlans.map((plan) => (
                         <div
@@ -201,7 +200,7 @@ export default function Menu() {
                                 <div className='flex flex-col items-center gap-2 mt-auto'>
                                     {plan && (
                                         <a href={plan.link}
-                                            className={`w-70 text-center text-xl bg-[#96DAE3] text-[#2a2935] font-bold py-1 rounded-sm duration-400 transition-all ease-in-out
+                                            className={`w-70 text-center text-xl bg-[#96DAE3] text-[#2a2935] shadow-[0px_3px_6px_#1819198a] font-bold py-1 rounded-sm duration-400 transition-all ease
                                                 ${plan.popular ? 'opacity-100 hover:opacity-70' : 'opacity-10 hover:opacity-100'}`}>
                                             {plan.btn}
                                         </a>
@@ -213,6 +212,14 @@ export default function Menu() {
                     ))}
                 </div>
             </section>
+
+            <footer className='flex items-center justify-center w-full py-10 text-white'>
+                <div className='flex items-center justify-center max-w-7xl'>
+                    <div className='w-full flex flex-col gap-5 text-base font-normal'>
+                        <p>© 2026 ANS – Automatic National Shipping | SA 2ª fase | Equipe ANS V3 | Projeto educacional do Curso Técnico em Desenvolvimento de Sistemas – SENAI Florianópolis/SC.</p>
+                    </div>
+                </div>
+            </footer>
         </div>
     )
 }

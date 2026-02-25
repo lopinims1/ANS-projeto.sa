@@ -132,11 +132,11 @@ export default function Conta() {
                                             onChange={e => buscarCep(e.target.value)}
                                             className="bg-[#2E2D37] rounded-md p-3 pl-5 placeholder:text-[#ffffff55] text-sm outline-none w-full"
                                         />
-                                        {cepCarregando && (
-                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#96DAE3] text-xs animate-pulse">buscando...</span>
-                                        )}
                                     </div>
-                                    {cepErro && <p className="text-red-400 text-xs pl-1">{cepErro}</p>}
+                                    {cepErro && <p className="text-red-400 text-xs ml-1">{cepErro}</p>}
+                                        {cepCarregando && (
+                                            <span className="ml-1 text-[#96DAE3] text-xs animate-pulse">Buscando...</span>
+                                        )}
                                 </div>
                             </div>
 
