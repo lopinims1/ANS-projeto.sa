@@ -80,7 +80,7 @@ export default function Conta() {
                 <div className="border border-[#96DAE3] self-stretch shrink-0" />
 
                 {/* Formulário */}
-                <div className="flex flex-col flex-1 gap-6 pt-2 pl-2 min-w-0">
+                <div className="flex flex-col flex-1 gap-4 pt-2 pl-2 min-w-0">
 
                     {/* E-mail */}
                     <div className="flex flex-col gap-1.5">
@@ -88,7 +88,7 @@ export default function Conta() {
                         <input type="email" placeholder="seuemail@gmail.com" className="bg-[#2E2D37] rounded-md p-3 pl-5 placeholder:text-[#ffffff55] text-sm outline-none w-full" />
                     </div>
 
-                    <div className="flex gap-6">
+                    <div className="flex justify-between">
                         {/* Campos à esquerda */}
                         <div className="flex flex-col gap-5 flex-1 max-w-230">
 
@@ -216,7 +216,7 @@ export default function Conta() {
                     </div>
 
                     {/* Botão salvar */}
-                    <div className="flex justify-end pb-2">
+                    <div className="flex pb-2">
                         <button className="bg-[#96DAE3] text-[#31303A] font-semibold text-sm px-8 py-2.5 rounded-md cursor-pointer hover:opacity-90 transition">
                             Salvar
                         </button>

@@ -203,7 +203,7 @@ function ProdutoCard({ produto, onRemover, salvo, onToggleSalvo }) {
               <FiMoreHorizontal className="text-black text-base" />
             </div>
             {menuAberto && (
-              <div className="absolute right-0 top-7 z-50 rounded-md overflow-hidden shadow-xl" style={{minWidth: 195, background: '#31303A'}}>
+              <div className="absolute right-0 top-7 z-10 rounded-md overflow-hidden shadow-xl" style={{minWidth: 195, background: '#31303A'}}>
                 <div
                   onClick={onRemover}
                   className="px-4 py-2.5 text-xs cursor-pointer transition-all duration-300"
@@ -422,7 +422,7 @@ export default function Search() {
       <div className="flex flex-col flex-1 min-w-0 px-4 pb-4 gap-4 overflow-hidden">
 
         {/* Dropdown do usuário */}
-        <div className="flex items-center justify-end shrink-0">
+        <div className="flex items-center z-150 justify-end shrink-0">
           <div className="relative">
             <button
               onClick={handleClick}
