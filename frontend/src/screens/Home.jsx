@@ -68,7 +68,6 @@ export default function Home() {
         };
     }, [handleScroll, updateThumb, adsList]);
 
-    // Força html/body/#root a ocuparem 100% independente do zoom
     useEffect(() => {
         const els = [document.documentElement, document.body];
         els.forEach(el => {
@@ -84,22 +83,16 @@ export default function Home() {
             root.style.height = '100%';
             root.style.overflow = 'hidden';
         }
-
-        // Bloqueia Ctrl+scroll (zoom com mouse)
         const blockScrollZoom = (e) => { if (e.ctrlKey) e.preventDefault(); };
-        // Bloqueia Ctrl++ / Ctrl+- / Ctrl+0
         const blockKeyZoom = (e) => {
             if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0'))
                 e.preventDefault();
         };
-        // Bloqueia pinch-to-zoom em touchpad
         const blockGesture = (e) => e.preventDefault();
-
         window.addEventListener('wheel', blockScrollZoom, { passive: false });
         window.addEventListener('keydown', blockKeyZoom);
         window.addEventListener('gesturestart', blockGesture);
         window.addEventListener('gesturechange', blockGesture);
-
         return () => {
             els.forEach(el => { el.style.width = ''; el.style.height = ''; el.style.overflow = ''; });
             if (root) { root.style.width = ''; root.style.height = ''; root.style.overflow = ''; }
@@ -163,11 +156,10 @@ export default function Home() {
         setAdForm({ nome: '', link: '', descricao: '' });
     }
 
+    // Threshold: a partir de quantos ads ativa o scroll
+    const SCROLL_THRESHOLD = 3;
+
     return (
-        /* 
-         * Usa width/height: 100% relativo ao #root que foi forçado pelo useEffect.
-         * Isso é imune ao zoom do browser, diferente de 100vw/100vh/fixed.
-         */
         <div
             onClick={() => setAdMenuOpen(null)}
             style={{ width: '100%', height: '100%', overflow: 'hidden', display: 'flex', background: '#31303A', position: 'relative' }}
@@ -180,7 +172,7 @@ export default function Home() {
                 .thumb-custom:hover { background: #96DAE3 !important; }
             `}</style>
 
-            {/* Nav lateral — absolute dentro do root 100%, sempre centralizada */}
+            {/* Nav lateral */}
             <div
                 style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', zIndex: 50 }}
                 className="bg-[#96DAE3] flex flex-col items-center justify-center gap-7 py-6 w-16 rounded-r-2xl"
@@ -198,7 +190,7 @@ export default function Home() {
                 ))}
             </div>
 
-            {/* Setinha dropdown — absolute no canto superior direito */}
+            {/* Setinha dropdown */}
             <div style={{ position: 'absolute', top: 0, right: 0, zIndex: 50 }}>
                 <div className="relative">
                     <button
@@ -251,8 +243,6 @@ export default function Home() {
                         <input type="checkbox" className="w-7 h-7 appearance-none rounded-sm cursor-pointer border-2 border-[#96DAE3] checked:bg-[#96DAE3] checked:[box-shadow:inset_0_0_0_3px_#31303A]" />
                         <span>Amazon</span>
                     </label>
-
-                    
                     <button className="flex justify-center items-center font-medium border-2 border-[#D7D7D7] rounded-sm w-7 h-7 cursor-pointer outline-none text-[#D7D7D7] shrink-0">
                         <span className="text-xl leading-none mb-1">+</span>
                     </button>
@@ -347,14 +337,21 @@ export default function Home() {
                                 </div>
                             ) : (
                                 <div className="bg-[#31303A] rounded-xl p-2 flex flex-col gap-2" style={{ minHeight: "417px" }}>
-                                    {/* Wrapper com maxHeight — scrollbar FORA do scrollRef */}
-                                    <div className="flex gap-1" style={{ maxHeight: adsList.length >= 5 ? "325px" : "none" }}>
-                                        {/* Apenas os cards scrollam */}
+
+                                    {/*
+                                     * FIX: wrapper define o maxHeight quando >= SCROLL_THRESHOLD.
+                                     * scrollRef só rola os cards (overflowY auto).
+                                     * scrollbar fica FORA do scrollRef como irmã — não some ao rolar.
+                                     */}
+                                    <div
+                                        className="flex gap-1"
+                                        style={{ maxHeight: adsList.length >= SCROLL_THRESHOLD ? "325px" : "none" }}
+                                    >
                                         <div
                                             ref={scrollRef}
                                             onScroll={handleScroll}
                                             className="flex flex-col gap-2 flex-1 hide-scrollbar"
-                                            style={{ overflowY: adsList.length >= 3 ? "auto" : "visible" }}
+                                            style={{ overflowY: adsList.length >= SCROLL_THRESHOLD ? "auto" : "visible" }}
                                         >
                                             {adsList.map((ad) => (
                                                 <div key={ad.id} className="bg-[#E5E3FF] rounded-xl flex items-center gap-3 px-3 py-2 shadow-md shrink-0">
@@ -393,12 +390,13 @@ export default function Home() {
                                                     </button>
                                                 </div>
                                             ))}
-                                            {adsList.length < 3 && (
+                                            {adsList.length < SCROLL_THRESHOLD && (
                                                 <button onClick={() => setAdModalOpen(true)} className="bg-[#96DAE3] hover:bg-[#7ecdd6] transition-colors rounded-xl h-12 flex items-center justify-center text-[#31303A] text-2xl font-bold cursor-pointer w-full shrink-0">+</button>
                                             )}
                                         </div>
-                                        {/* Scrollbar FORA do scrollRef — não some ao rolar */}
-                                        {adsList.length >= 3 && (
+
+                                        {/* Scrollbar FORA do scrollRef */}
+                                        {adsList.length >= SCROLL_THRESHOLD && (
                                             <div className="flex flex-col items-center gap-2 py-1 shrink-0" style={{ width: "20px" }}>
                                                 <div ref={trackRef} onClick={onTrackClick} style={{ flex: 1, width: "2px", background: "#ffffff18", borderRadius: "2px", position: "relative", cursor: "pointer" }}>
                                                     <div ref={thumbRef} onMouseDown={onMouseDown} className="thumb-custom"
@@ -408,7 +406,8 @@ export default function Home() {
                                             </div>
                                         )}
                                     </div>
-                                    {adsList.length >= 3 && (
+
+                                    {adsList.length >= SCROLL_THRESHOLD && (
                                         <button onClick={() => setAdModalOpen(true)} className="bg-[#96DAE3] hover:bg-[#7ecdd6] transition-colors rounded-xl h-12 flex items-center justify-center text-[#31303A] text-2xl font-bold cursor-pointer w-full shrink-0 mt-auto">+</button>
                                     )}
                                 </div>
