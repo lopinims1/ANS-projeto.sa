@@ -450,7 +450,7 @@ export default function Home() {
 
             {/* Menu 3 pontos */}
             {adMenuOpen !== null && (
-                <div className="fixed z-[100] bg-[#31303A] rounded-xl shadow-2xl overflow-hidden border border-[#ffffff15]"
+                <div className="fixed z-100 bg-[#31303A] rounded-xl shadow-2xl overflow-hidden border border-[#ffffff15]"
                     style={{ top: menuPos.top, left: menuPos.left, minWidth: "130px" }}
                     onClick={e => e.stopPropagation()}>
                     <button onClick={() => { const ad = adsList.find(a => a.id === adMenuOpen); setAdForm({ nome: ad.nome, link: ad.link, descricao: ad.descricao }); setAdModalOpen(adMenuOpen); setAdMenuOpen(null); }}

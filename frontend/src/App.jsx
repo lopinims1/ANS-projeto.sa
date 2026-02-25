@@ -5,13 +5,15 @@ import Register from './screens/login.registro/Register.jsx'
 import Home from './screens/Home.jsx'
 import Search from './screens/Search.jsx'
 import Conta from './screens/Conta.jsx'
+import Cart from './screens/Cart.jsx'
+import { CartProvider } from './screens/cart-content/CartContent.jsx'
 import './index.css'
 
 function App() {
  
   return (
     <>
-   
+      <CartProvider>
       <Routes>
         <Route path="/" element={<Menu />} />
         <Route path="/login" element={<Login />} />
@@ -19,9 +21,10 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/search" element={<Search />} />
         <Route path="/conta" element={<Conta />} />
+        <Route path="/cart" element={<Cart />} />
         <Route path="*" element={<h1>404</h1>} />
       </Routes>
-      
+      </CartProvider>
     </>
   )
 }

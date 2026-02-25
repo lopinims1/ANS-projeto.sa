@@ -1,122 +1,146 @@
 import { BiLike, BiDislike, BiSolidLike, BiSolidDislike } from "react-icons/bi";
 import { FaStar, FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { FiMoreHorizontal } from "react-icons/fi";
-import { BsCart3 } from "react-icons/bs";
-import { Link } from 'react-router-dom'
+import { BsCart3, BsCartCheckFill } from "react-icons/bs";
+import { Link } from 'react-router-dom';
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useCart } from './cart-content/CartContent';
 
 const produtos = [
   {
     id: 1,
     nome: "Mouse Gamer RGB Logitech",
     preco: "R$419,90 (+)",
+    precoNumerico: 419.90,
     precoColor: "text-green-700",
     estrelas: 5,
     likes: "67k",
+    tipo: "Eletrônicos",
     imageUrl: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&h=300&fit=crop",
   },
   {
     id: 2,
     nome: "Teclado Mecânico Logitech",
     preco: "R$699,00 (+)",
+    precoNumerico: 699.00,
     precoColor: "text-green-700",
     estrelas: 4,
     likes: "12k",
+    tipo: "Eletrônicos",
     imageUrl: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&h=300&fit=crop",
   },
   {
     id: 3,
     nome: "Headset Pro bluetooth",
     preco: "R$499,00 (+)",
+    precoNumerico: 499.00,
     precoColor: "text-green-700",
     estrelas: 5,
     likes: "5.3k",
+    tipo: "Eletrônicos",
     imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop",
   },
   {
     id: 4,
     nome: "Monitor LG Ultragear 180hz",
     preco: "R$799,00 (+)",
+    precoNumerico: 799.00,
     precoColor: "text-green-700",
     estrelas: 5,
     likes: "201k",
+    tipo: "Eletrônicos",
     imageUrl: "https://http2.mlstatic.com/D_NQ_NP_2X_817281-MLA107167838581_022026-F.webp",
   },
   {
     id: 5,
     nome: "Iphone 16",
     preco: "R$3.499,00 (+)",
+    precoNumerico: 3499.00,
     precoColor: "text-green-700",
     estrelas: 4,
     likes: "88k",
+    tipo: "Eletrônicos",
     imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop",
   },
   {
     id: 6,
     nome: "PC Gamer Setup",
     preco: "R$8.500,00 (+)",
+    precoNumerico: 8500.00,
     precoColor: "text-green-700",
     estrelas: 5,
     likes: "134k",
+    tipo: "Eletrônicos",
     imageUrl: "https://images2.kabum.com.br/produtos/fotos/sync_mirakl/916592/xlarge/PC-Gamer-Pulse-By-Bluepc-Amd-Ryzen-7-5700x-B450-Geforce-RTX-3050-8GB-16gb-Ddr4-SSD-M-2-PCie-512gb-Fonte-600w-80-Plus-Pgbp-pul124_1770930083.jpg",
   },
   {
     id: 7,
     nome: "Alexa Echo Dot",
     preco: "R$399,00 (+)",
+    precoNumerico: 399.00,
     precoColor: "text-green-700",
     estrelas: 4,
     likes: "33k",
+    tipo: "Eletrônicos",
     imageUrl: "https://www.estadao.com.br/recomenda/wp-content/uploads/2024/07/echo-dot-5.jpg.webp",
   },
   {
     id: 8,
     nome: "Monitor 4K 144Hz",
     preco: "R$2.199,00 (+)",
+    precoNumerico: 2199.00,
     precoColor: "text-green-700",
     estrelas: 5,
     likes: "9.7k",
+    tipo: "Eletrônicos",
     imageUrl: "https://m.media-amazon.com/images/I/616NYrEQ6QL._AC_SX679_.jpg",
   },
   {
     id: 9,
     nome: "Webcam Full HD Sony Picture",
     preco: "R$399,00 (+)",
+    precoNumerico: 399.00,
     precoColor: "text-green-700",
     estrelas: 4,
     likes: "512k",
+    tipo: "Eletrônicos",
     imageUrl: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=300&fit=crop",
   },
   {
     id: 10,
     nome: "GPU RTX 2080",
     preco: "R$3.899,00 (+)",
+    precoNumerico: 3899.00,
     precoColor: "text-green-700",
     estrelas: 5,
     likes: "420k",
+    tipo: "Eletrônicos",
     imageUrl: "https://files.tecnoblog.net/wp-content/uploads/2019/07/nvidia-geforce-rtx-2080-super.jpg",
   },
   {
     id: 11,
     nome: "SSD NVMe 2TB Sandisk",
     preco: "R$1549,99 (+)",
+    precoNumerico: 1549.99,
     precoColor: "text-green-700",
     estrelas: 4,
     likes: "17k",
+    tipo: "Eletrônicos",
     imageUrl: "https://cdn.awsli.com.br/600x450/25/25449/produto/360987411/5824d9f590c1448d8b8f06b81e1401a9-product-images-9271506-6b6ac64ceded47cf94e31abb-qloh9iwo4g.jpeg",
   },
   {
     id: 12,
     nome: "Controle Dualshock Ps4",
     preco: "R$200,00 (+)",
+    precoNumerico: 200.00,
     precoColor: "text-green-700",
     estrelas: 5,
     likes: "45k",
+    tipo: "Eletrônicos",
     imageUrl: "https://images.unsplash.com/photo-1592840496694-26d035b52b48?w=400&h=300&fit=crop",
   },
 ];
 
-// Dropdown customizado no estilo do site
 function CustomSelect({ label, value, onChange, options }) {
   const [aberto, setAberto] = useState(false);
   const ref = useRef(null);
@@ -136,21 +160,13 @@ function CustomSelect({ label, value, onChange, options }) {
       <button
         onClick={() => setAberto(prev => !prev)}
         className="flex items-center gap-2 px-4 py-1.5 rounded-sm border-2 text-xs font-medium transition-all duration-200 cursor-pointer"
-        style={{
-          borderColor: '#96DAE3',
-          background: value ? '#96DAE3' : 'transparent',
-          color: value ? '#31303A' : '#96DAE3',
-        }}
+        style={{ borderColor: '#96DAE3', background: value ? '#96DAE3' : 'transparent', color: value ? '#31303A' : '#96DAE3' }}
       >
         {labelAtivo}
         <span style={{ fontSize: 9, opacity: 0.7 }}>▼</span>
       </button>
-
       {aberto && (
-        <div
-          className="absolute left-0 top-9 rounded-sm overflow-hidden"
-          style={{ minWidth: '100%', background: '#31303A', border: '2px solid #96DAE3', zIndex: 9999 }}
-        >
+        <div className="absolute left-0 top-9 rounded-sm overflow-hidden" style={{ minWidth: '100%', background: '#31303A', border: '2px solid #96DAE3', zIndex: 9999 }}>
           {[{ value: '', label }, ...options].map(opt => (
             <div
               key={opt.value}
@@ -170,19 +186,19 @@ function CustomSelect({ label, value, onChange, options }) {
 }
 
 function ProdutoCard({ produto, onRemover, salvo, onToggleSalvo }) {
-  const [voto, setVoto] = useState(null); // 'like' | 'dislike' | null
+  const [voto, setVoto] = useState(null);
   const [menuAberto, setMenuAberto] = useState(false);
+  const { adicionarAoCart, estaNoCart } = useCart();
+  const noCart = estaNoCart(produto.id);
 
   return (
-    <div className="bg-[#96DAE3] rounded-lg p-3 flex flex-col justify-between shadow-md" style={{aspectRatio:"352/377"}}>
+    <div className="bg-[#96DAE3] rounded-lg p-3 flex flex-col justify-between shadow-md" style={{ aspectRatio: "352/377" }}>
       {/* IMAGEM */}
-      <div className="relative bg-white rounded-md flex items-center justify-center overflow-hidden" style={{height:"65%"}}>
-        {produto.imageUrl ? (
-          <img src={produto.imageUrl} alt={produto.nome} className="w-full h-full object-cover rounded-md" />
-        ) : (
-          <span className="text-gray-400 text-sm">imagem produto</span>
-        )}
-        {/* Bookmark — contorno vira preenchido ao clicar */}
+      <div className="relative bg-white rounded-md flex items-center justify-center overflow-hidden" style={{ height: "65%" }}>
+        {produto.imageUrl
+          ? <img src={produto.imageUrl} alt={produto.nome} className="w-full h-full object-cover rounded-md" />
+          : <span className="text-gray-400 text-sm">imagem produto</span>}
+
         <button
           onClick={onToggleSalvo}
           className="absolute top-2 right-2 bg-transparent border-none p-0 cursor-pointer transition-transform duration-200 hover:scale-110"
@@ -194,16 +210,13 @@ function ProdutoCard({ produto, onRemover, salvo, onToggleSalvo }) {
       {/* INFOS */}
       <div className="mt-2">
         <div className="flex justify-between items-center">
-          <p className="font-semibold text-black text-sm">{produto.nome}</p>
-          <div className="relative">
-            <div
-              onClick={() => setMenuAberto(prev => !prev)}
-              className="border border-black rounded-sm p-0.5 cursor-pointer"
-            >
+          <p className="font-semibold text-black text-sm truncate pr-1">{produto.nome}</p>
+          <div className="relative shrink-0">
+            <div onClick={() => setMenuAberto(prev => !prev)} className="border border-black rounded-sm p-0.5 cursor-pointer">
               <FiMoreHorizontal className="text-black text-base" />
             </div>
             {menuAberto && (
-              <div className="absolute right-0 top-7 z-50 rounded-md overflow-hidden shadow-xl" style={{minWidth: 195, background: '#31303A'}}>
+              <div className="absolute right-0 top-7 z-50 rounded-md overflow-hidden shadow-xl" style={{ minWidth: 195, background: '#31303A' }}>
                 <div
                   onClick={onRemover}
                   className="px-4 py-2.5 text-xs cursor-pointer transition-all duration-300"
@@ -225,40 +238,46 @@ function ProdutoCard({ produto, onRemover, salvo, onToggleSalvo }) {
         </div>
       </div>
 
-      {/* LIKES + CARRINHO */}
-      <div className="flex justify-between items-center mt-2">
-        <div className="flex gap-2">
-          {/* Like — outline vira solid ao clicar, cancela dislike */}
+      {/* LIKES + CARRINHO + ADICIONAR */}
+      <div className="flex justify-between items-center mt-2 gap-1">
+        <div className="flex gap-2 shrink-0">
           <div
             onClick={() => setVoto(prev => prev === 'like' ? null : 'like')}
             className="bg-green-600 p-1.5 rounded cursor-pointer transition-transform duration-200 hover:scale-110"
           >
-            {voto === 'like'
-              ? <BiSolidLike size={20} className="text-white" />
-              : <BiLike size={20} className="text-white" />}
+            {voto === 'like' ? <BiSolidLike size={18} className="text-white" /> : <BiLike size={18} className="text-white" />}
           </div>
-          {/* Dislike — outline vira solid ao clicar, cancela like */}
           <div
             onClick={() => setVoto(prev => prev === 'dislike' ? null : 'dislike')}
             className="bg-red-600 p-1.5 rounded cursor-pointer transition-transform duration-200 hover:scale-110"
           >
-            {voto === 'dislike'
-              ? <BiSolidDislike size={20} className="text-white" />
-              : <BiDislike size={20} className="text-white" />}
+            {voto === 'dislike' ? <BiSolidDislike size={18} className="text-white" /> : <BiDislike size={18} className="text-white" />}
           </div>
         </div>
-        {/* Carrinho + número */}
-        <div className="flex items-center gap-1 text-green-700">
-          <BsCart3 size={16} />
-          <span className="text-sm font-bold">{produto.likes}</span>
-        </div>
+
+        {/* Botão adicionar aos meus produtos */}
+        <button
+          onClick={() => !noCart && adicionarAoCart({ ...produto, preco: produto.precoNumerico, imageUrl: produto.imageUrl, tipo: produto.tipo })}
+          className="flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all duration-200 cursor-pointer shrink-0"
+          style={{
+            background: noCart ? '#31303A' : '#31303A',
+            color: noCart ? '#96DAE3' : '#fff',
+            border: `1px solid ${noCart ? '#96DAE3' : '#ffffff60'}`,
+            opacity: noCart ? 1 : 0.85,
+          }}
+          onMouseEnter={e => { if (!noCart) { e.currentTarget.style.opacity = '1'; e.currentTarget.style.borderColor = '#96DAE3'; e.currentTarget.style.color = '#96DAE3'; }}}
+          onMouseLeave={e => { if (!noCart) { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.borderColor = '#ffffff60'; e.currentTarget.style.color = '#fff'; }}}
+        >
+          {noCart
+            ? <><BsCartCheckFill size={12} /> Adicionado</>
+            : <><BsCart3 size={12} /> Adicionar</>}
+        </button>
       </div>
     </div>
   );
 }
 
 export default function Search() {
-
   const asideIcons = [
     { image: "Lupa", link: "/search", active: true },
     { image: "Home", link: "/home", active: false },
@@ -279,7 +298,6 @@ export default function Search() {
   const [filtroPrecoMax, setFiltroPrecoMax] = useState('');
   const [filtroLucro, setFiltroLucro] = useState('');
 
-  // Mapa de tipo por produto (baseado no id para o exemplo)
   const tipoMap = {
     1: 'Eletrônicos', 2: 'Eletrônicos', 3: 'Eletrônicos', 4: 'Eletrônicos',
     5: 'Eletrônicos', 6: 'Eletrônicos', 7: 'Eletrônicos', 8: 'Eletrônicos',
@@ -308,7 +326,6 @@ export default function Search() {
   const dragStartY = useRef(0);
   const dragStartScrollTop = useRef(0);
   const scrollTimeout = useRef(null);
-
   const [thumbStyle, setThumbStyle] = useState({ top: 0, height: 40 });
   const [isScrolling, setIsScrolling] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -323,9 +340,8 @@ export default function Search() {
     const maxScroll = scrollHeight - clientHeight;
     const ratio = maxScroll > 0 ? scrollTop / maxScroll : 0;
     const thumbTop = ratio * (trackHeight - thumbHeight);
-    const prog = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
     setThumbStyle({ top: thumbTop, height: thumbHeight });
-    setProgress(prog);
+    setProgress(maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0);
   }, []);
 
   const handleScroll = useCallback(() => {
@@ -342,10 +358,7 @@ export default function Search() {
     el.addEventListener("scroll", handleScroll, { passive: true });
     const ro = new ResizeObserver(updateThumb);
     ro.observe(el);
-    return () => {
-      el.removeEventListener("scroll", handleScroll);
-      ro.disconnect();
-    };
+    return () => { el.removeEventListener("scroll", handleScroll); ro.disconnect(); };
   }, [handleScroll, updateThumb]);
 
   const onMouseDown = useCallback((e) => {
@@ -353,7 +366,6 @@ export default function Search() {
     isDragging.current = true;
     dragStartY.current = e.clientY;
     dragStartScrollTop.current = scrollRef.current?.scrollTop || 0;
-
     const onMove = (e) => {
       if (!isDragging.current) return;
       const el = scrollRef.current;
@@ -366,13 +378,11 @@ export default function Search() {
       const scrollRatio = maxThumbTop > 0 ? delta / maxThumbTop : 0;
       el.scrollTop = dragStartScrollTop.current + scrollRatio * (scrollHeight - clientHeight);
     };
-
     const onUp = () => {
       isDragging.current = false;
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
     };
-
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
   }, []);
@@ -387,28 +397,20 @@ export default function Search() {
     el.scrollTo({ top: ratio * (el.scrollHeight - el.clientHeight), behavior: "smooth" });
   }, []);
 
-  function handleClick() {
-    setContainerOpen(prev => !prev);
-  }
-
   return (
     <div className="bg-[#31303A] h-screen w-screen overflow-hidden flex">
-
       <style>{`
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .thumb-custom { transition: background 0.3s ease; cursor: grab; }
         .thumb-custom:active { cursor: grabbing; }
         .thumb-custom:hover { background: #96DAE3 !important; }
-
       `}</style>
 
       {/* NAV LATERAL */}
       <div className="bg-[#96DAE3] flex flex-col items-center justify-center gap-7 h-fit self-center py-6 w-16 rounded-r-2xl shrink-0">
         {asideIconsActive.map((item, index) => (
-          <Link key={index} to={item.link} onClick={() => {
-            setAsideIconsActive(prev => prev.map((el, i) => ({ ...el, active: i === index })))
-          }}>
+          <Link key={index} to={item.link} onClick={() => setAsideIconsActive(prev => prev.map((el, i) => ({ ...el, active: i === index })))}>
             <img
               src={`../../public/${item.image}.svg`}
               alt={item.image}
@@ -425,15 +427,14 @@ export default function Search() {
         <div className="flex items-center justify-end shrink-0">
           <div className="relative">
             <button
-              onClick={handleClick}
+              onClick={() => setContainerOpen(p => !p)}
               className={`bg-[#96DAE3] rounded-b-lg w-10 h-5 flex items-center justify-center cursor-pointer transition-all duration-300 ${containerOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
             >
               <img src="https://img.icons8.com/?size=100&id=4GrGB5l93HFc&format=png&color=31303A" className="w-4 h-4" alt="Dropdown" />
             </button>
-
             <div className={`absolute right-0 top-0 bg-[#96DAE3] rounded-b-xl z-50 transition-all duration-400 ease-in-out overflow-hidden ${containerOpen ? 'max-h-60 opacity-100 shadow-lg' : 'max-h-0 opacity-0'}`}>
               <div className="flex justify-end px-3 pt-2 pb-2">
-                <button onClick={handleClick} className="text-[#31303A] transition-transform duration-300 cursor-pointer">
+                <button onClick={() => setContainerOpen(false)} className="text-[#31303A] cursor-pointer">
                   <img src="https://img.icons8.com/?size=100&id=39787&format=png&color=000000" className="w-4 h-4" alt="Fechar" />
                 </button>
               </div>
@@ -451,8 +452,7 @@ export default function Search() {
         </div>
 
         {/* BARRA DE PESQUISA + FILTROS */}
-        <div className="flex flex-col gap-2 shrink-0" style={{position:"relative", zIndex: 100}}>
-          {/* Linha principal */}
+        <div className="flex flex-col gap-2 shrink-0" style={{ position: "relative", zIndex: 100 }}>
           <div className="flex gap-4 items-center">
             <button
               onClick={() => setFiltrosAbertos(prev => !prev)}
@@ -475,81 +475,36 @@ export default function Search() {
             </button>
           </div>
 
-          {/* Painel de filtros */}
-          <div
-            className="transition-all duration-300 ease-in-out"
-            style={{ maxHeight: filtrosAbertos ? '52px' : '0', opacity: filtrosAbertos ? 1 : 0, overflow: 'visible' }}
-          >
+          <div className="transition-all duration-300 ease-in-out" style={{ maxHeight: filtrosAbertos ? '52px' : '0', opacity: filtrosAbertos ? 1 : 0, overflow: 'visible' }}>
             <div className="flex gap-2 items-center pt-2">
-
-              {/* Favoritados — toggle pill */}
               <button
                 onClick={() => setFiltroFavoritados(prev => !prev)}
                 className="flex items-center gap-1.5 px-4 py-1.5 rounded-sm border-2 text-xs font-medium transition-all duration-200 cursor-pointer"
-                style={{
-                  borderColor: '#96DAE3',
-                  background: filtroFavoritados ? '#96DAE3' : 'transparent',
-                  color: filtroFavoritados ? '#31303A' : '#96DAE3',
-                }}
+                style={{ borderColor: '#96DAE3', background: filtroFavoritados ? '#96DAE3' : 'transparent', color: filtroFavoritados ? '#31303A' : '#96DAE3' }}
               >
-                <FaBookmark size={10} />
-                Favoritados
+                <FaBookmark size={10} /> Favoritados
               </button>
 
-              {/* Tipo */}
-              <CustomSelect
-                label="Tipo"
-                value={filtroTipo}
-                onChange={setFiltroTipo}
-                options={[
-                  { value: 'Eletrônicos', label: 'Eletrônicos' },
-                  { value: 'Vestimentas', label: 'Vestimentas' },
-                  { value: 'Comidas', label: 'Comidas' },
-                  { value: 'Diversos', label: 'Diversos' },
-                ]}
-              />
+              <CustomSelect label="Tipo" value={filtroTipo} onChange={setFiltroTipo} options={[
+                { value: 'Eletrônicos', label: 'Eletrônicos' },
+                { value: 'Vestimentas', label: 'Vestimentas' },
+                { value: 'Comidas', label: 'Comidas' },
+                { value: 'Diversos', label: 'Diversos' },
+              ]} />
 
-              {/* Preço */}
-              <div
-                className="flex items-center gap-2 px-3 py-1.5 rounded-sm border-2 text-xs transition-all duration-200"
-                style={{
-                  borderColor: '#96DAE3',
-                  background: (filtroPrecoMin || filtroPrecoMax) ? '#96DAE310' : 'transparent',
-                }}
-              >
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-sm border-2 text-xs transition-all duration-200" style={{ borderColor: '#96DAE3', background: (filtroPrecoMin || filtroPrecoMax) ? '#96DAE310' : 'transparent' }}>
                 <span className="text-[#96DAE3] font-medium">Preço</span>
                 <span className="text-[#96DAE3] opacity-50">De</span>
-                <input
-                  type="number"
-                  placeholder="0"
-                  value={filtroPrecoMin}
-                  onChange={e => setFiltroPrecoMin(e.target.value)}
-                  className="bg-transparent text-[#96DAE3] text-xs outline-none w-14 text-center"
-                  style={{borderBottom: '1px solid #96DAE360'}}
-                />
+                <input type="number" placeholder="0" value={filtroPrecoMin} onChange={e => setFiltroPrecoMin(e.target.value)} className="bg-transparent text-[#96DAE3] text-xs outline-none w-14 text-center" style={{ borderBottom: '1px solid #96DAE360' }} />
                 <span className="text-[#96DAE3] opacity-50">Até</span>
-                <input
-                  type="number"
-                  placeholder="9999"
-                  value={filtroPrecoMax}
-                  onChange={e => setFiltroPrecoMax(e.target.value)}
-                  className="bg-transparent text-[#96DAE3] text-xs outline-none w-14 text-center"
-                  style={{borderBottom: '1px solid #96DAE360'}}
-                />
+                <input type="number" placeholder="9999" value={filtroPrecoMax} onChange={e => setFiltroPrecoMax(e.target.value)} className="bg-transparent text-[#96DAE3] text-xs outline-none w-14 text-center" style={{ borderBottom: '1px solid #96DAE360' }} />
               </div>
 
-              {/* Lucro */}
-              <CustomSelect
-                label="Lucro"
-                value={filtroLucro}
-                onChange={setFiltroLucro}
-                options={[
-                  { value: '+', label: 'Positivo (+)' },
-                  { value: '-', label: 'Negativo (−)' },
-                ]}
-              />
+              <CustomSelect label="Lucro" value={filtroLucro} onChange={setFiltroLucro} options={[
+                { value: '+', label: 'Positivo (+)' },
+                { value: '-', label: 'Negativo (−)' },
+              ]} />
 
-              {/* Limpar */}
               {(filtroFavoritados || filtroTipo || filtroPrecoMin || filtroPrecoMax || filtroLucro) && (
                 <button
                   onClick={() => { setFiltroFavoritados(false); setFiltroTipo(''); setFiltroPrecoMin(''); setFiltroPrecoMax(''); setFiltroLucro(''); }}
@@ -567,40 +522,23 @@ export default function Search() {
           <div ref={scrollRef} className="hide-scrollbar flex-1 overflow-y-auto overflow-x-hidden">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {produtosFiltrados.map((produto) => (
-                <ProdutoCard key={produto.id} produto={produto} onRemover={() => setRemovedIds(prev => [...prev, produto.id])} salvo={favoritados.includes(produto.id)} onToggleSalvo={() => setFavoritados(prev => prev.includes(produto.id) ? prev.filter(id => id !== produto.id) : [...prev, produto.id])} />
+                <ProdutoCard
+                  key={produto.id}
+                  produto={produto}
+                  onRemover={() => setRemovedIds(prev => [...prev, produto.id])}
+                  salvo={favoritados.includes(produto.id)}
+                  onToggleSalvo={() => setFavoritados(prev => prev.includes(produto.id) ? prev.filter(id => id !== produto.id) : [...prev, produto.id])}
+                />
               ))}
             </div>
           </div>
 
-          {/* SCROLLBAR CUSTOMIZADA */}
+          {/* SCROLLBAR */}
           <div className="flex flex-col items-center gap-2 py-1 shrink-0" style={{ width: "20px" }}>
-            <div
-              ref={trackRef}
-              onClick={onTrackClick}
-              style={{ flex: 1, width: "2px", background: "#ffffff18", borderRadius: "2px", position: "relative", cursor: "pointer" }}
-            >
-              <div
-                ref={thumbRef}
-                onMouseDown={onMouseDown}
-                className="thumb-custom"
-                style={{
-                  position: "absolute",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  top: `${thumbStyle.top}px`,
-                  height: `${thumbStyle.height}px`,
-                  width: "3px",
-                  background: isScrolling ? "#96DAE3" : "#96DAE380",
-                  borderRadius: "3px",
-                  userSelect: "none",
-                }}
-              />
+            <div ref={trackRef} onClick={onTrackClick} style={{ flex: 1, width: "2px", background: "#ffffff18", borderRadius: "2px", position: "relative", cursor: "pointer" }}>
+              <div ref={thumbRef} onMouseDown={onMouseDown} className="thumb-custom" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", top: `${thumbStyle.top}px`, height: `${thumbStyle.height}px`, width: "3px", background: isScrolling ? "#96DAE3" : "#96DAE380", borderRadius: "3px", userSelect: "none" }} />
             </div>
-            <div style={{
-              width: "4px", height: "4px", borderRadius: "50%",
-              background: progress >= 99 ? "#96DAE3" : "#ffffff20",
-              transition: "background 0.4s ease", flexShrink: 0,
-            }} />
+            <div style={{ width: "4px", height: "4px", borderRadius: "50%", background: progress >= 99 ? "#96DAE3" : "#ffffff20", transition: "background 0.4s ease", flexShrink: 0 }} />
           </div>
         </div>
       </div>
