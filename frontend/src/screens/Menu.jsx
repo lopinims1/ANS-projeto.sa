@@ -182,19 +182,14 @@ export default function Menu() {
                     {infoPlans.map((plan) => (
                         <div
                             key={plan.title}
-                            style={{
-                                background: plan.popular ? 'linear-gradient(to top, #96DAE3, #3f3e4d, transparent)' : 'linear-gradient(to bottom, #3f3e4d, transparent)',
-                                padding: '2px',
-                                borderRadius: plan.popular ? '1rem' : '',
-                            }}
-                            className={`transition-all duration-300 ${plan.popular ? 'scale-105 ' : ''}`}
-                        >
-                            <div className={`flex flex-col justify-between p-6 bg-linear-to-t from-[#1D1C2A] via-[#1d1c2aa1] to-transparent
-                            ${plan.popular ? 'min-h-105 w-105 rounded-2xl' : 'min-h-95 w-95'} ${plan.premium ? 'rounded-r-2xl' : ''} ${plan.basic ? 'rounded-l-2xl' : ''}`}
+                            className={`transition-all duration-300  ${plan.popular ? 'scale-105' : ''}`}>
+
+                            <div className={`flex flex-col justify-between p-6 bg-linear-to-t from-[#1D1C2A] via-[#1d1c2ab6] to-transparent
+                            ${plan.popular ? 'min-h-120 w-120 rounded-b-2xl border-gradient' : 'min-h-95 w-95'} ${plan.premium ? 'rounded-r-2xl' : ''} ${plan.basic ? 'rounded-l-2xl' : ''}`}
                             >
                                 <ul className='flex flex-col gap-4 mb-6'>
                                     {plan.infos.map((info, i) => (
-                                        <li key={i} className='flex items-center gap-4 text-sm text-[#96DAE3]'>
+                                        <li key={i} className={`flex items-center gap-4  text-sm text-[#96DAE3]`}>
                                             <div className='flex items-center justify-center bg-[#96DAE3] rounded-sm p-1'>
                                                 <img src={planIcons[info.image]} alt={info.image} className='w-6 h-6' />
                                             </div>
@@ -206,8 +201,8 @@ export default function Menu() {
                                 <div className='flex flex-col items-center gap-2 mt-auto'>
                                     {plan && (
                                         <a href={plan.link}
-                                            className={`w-70 text-center bg-[#96DAE3] text-[#2a2935] font-bold py-2 rounded-sm duration-600 transition-all ease-in-out
-                                                ${plan.popular ? 'opacity-100' : 'opacity-0 hover:opacity-100'}`}>
+                                            className={`w-70 text-center text-xl bg-[#96DAE3] text-[#2a2935] font-bold py-1 rounded-sm duration-400 transition-all ease-in-out
+                                                ${plan.popular ? 'opacity-100 hover:opacity-70' : 'opacity-10 hover:opacity-100'}`}>
                                             {plan.btn}
                                         </a>
                                     )}
