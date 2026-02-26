@@ -23,9 +23,8 @@ export default function Register() {
 
 
   const images = [
-    'https://images.unsplash.com/photo-1557683316-973673baf926?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?w=800&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1557682268-e3955ed5d83f?w=800&h=600&fit=crop'
+    './public/mulherImg.png',
+    './public/mulherImg2.png',
   ];
 
   function handleChange(e) {
