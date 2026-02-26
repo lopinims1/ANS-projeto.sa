@@ -13,10 +13,8 @@ import MacIcon from '../assets/OsIcons/MacIcon.svg'
 
 export default function Menu() {
     const headerInfos = [
-        { title: "Home", link: "/home", active: false },
-        { title: "About", link: "/about", active: false },
-        { title: "Plans", link: "/plans", active: false },
-        { title: "Contact", link: "/contact", active: false },
+        { title: "About", link: "about", active: false },
+        { title: "Plans", link: "plans", active: false },
     ];
     const [headerInfosActive, setHeaderInfosActive] = useState(headerInfos);
     const [iconVisible, setIconVisible] = useState(true);
@@ -29,6 +27,17 @@ export default function Menu() {
         } else {
             setContainerOpen(false);
             setTimeout(() => setIconVisible(true), 350);
+        }
+    }
+
+    function handleNavClick(e, info) {
+        e.preventDefault();
+        setHeaderInfosActive(headerInfosActive.map(i =>
+            i.title === info.title ? { ...i, active: true } : { ...i, active: false }
+        ));
+        const section = document.getElementById(info.link);
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth' });
         }
     }
 
@@ -51,7 +60,7 @@ export default function Menu() {
                 { image: "Models", text: "2 variações de cor" },
                 { image: "Foguinho", text: "Lojas em alta (1)" },
             ],
-            link: "/",
+            link: "/register",
             btn: "ASSINAR",
             popular: false,
             basic: true,
@@ -67,7 +76,7 @@ export default function Menu() {
                 { image: "Foguinho", text: "Lojas em alta (3)" },
             ],
 
-            link: "/",
+            link: "/register",
             btn: "ASSINAR",
             popular: true,
             basic: false,
@@ -82,7 +91,7 @@ export default function Menu() {
                 { image: "Alert", text: "Alerta de produtos (Sem fila)" },
                 { image: "Foguinho", text: "Lojas em alta (3)" },
             ],
-            link: "/",
+            link: "/register",
             btn: "ASSINAR",
             popular: false,
             basic: false,
@@ -98,17 +107,15 @@ export default function Menu() {
                 <div className='flex items-center justify-between w-full max-w-7xl'>
 
                     <nav className="flex gap-7">
-
-                        {/* Font bold em cada item com active true */}
                         {headerInfosActive.map(info => (
-                            <ul key={info.title} onClick={() => {
-
-                                setHeaderInfosActive(headerInfosActive.map(i =>
-                                    i.title === info.title ? { ...i, active: true } : { ...i, active: false }
-                                ));
-                            }}>
+                            <ul key={info.title}>
                                 <li className={info.active ? "font-bold" : ""}>
-                                    <a href={info.link}>{info.title}</a>
+                                    <a
+                                        href={`#${info.link}`}
+                                        onClick={(e) => handleNavClick(e, info)}
+                                    >
+                                        {info.title}
+                                    </a>
                                 </li>
                             </ul>
                         ))}
@@ -166,7 +173,8 @@ export default function Menu() {
             <img className='w-full' src="./bottomMain.svg" />
 
 
-            <section className='flex justify-center w-full py-10 h-100 text-white'>
+            {/* id="about" adicionado aqui para o scroll funcionar */}
+            <section id='about' className='flex justify-center w-full py-10 h-100 text-white'>
                 <div className='flex justify-between w-full max-w-7xl'>
 
                     <div className='w-full max-w-2xl flex flex-col gap-5 text-lg font-normal'>
@@ -176,6 +184,7 @@ export default function Menu() {
                 </div>
             </section>
 
+            {/* id="plans" já existia aqui */}
             <section id='plans' className='flex justify-center w-full py-10 text-white'>
                 <div className='flex items-center justify-center gap-2 w-full max-w-7xl'>
                     {infoPlans.map((plan) => (
